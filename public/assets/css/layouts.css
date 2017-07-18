@@ -3,6 +3,10 @@ html, body {
     background: #f1f2f7;
 }
 
+.form-help-block {
+    margin-bottom: 0;
+}
+
 .login-padding-15 {
     padding: 15px !important;
 }
@@ -63,4 +67,30 @@ html, body {
 .login-forget-password {
     height: 34px;
     line-height: 34px;
+}
+
+.content-iframe {
+    width: 100%;
+}
+
+.parent-window-content-wapper > .content{
+    padding-right: 0 !important;
+}
+
+.iframe-content-warpper {
+    margin-left: 0 !important;
+}
+
+.alert-area {
+    padding: 15px;
+    padding-bottom: 0;
+}
+
+.actions-list, .actions-list > thead > tr > th{
+    text-align: center;
+}
+
+.actions-list-urls {
+    max-height: 100px;
+    overflow: auto;
 }

@@ -14,6 +14,15 @@
 Route::get('/login', function () {
     return view('login');
 });
-Route::get('/', function () {
-    return view('test');
+Route::get('/index', function () {
+    return view('layouts.frame');
+});
+Route::group(['prefix' => 'system'], function () {
+    Route::group(['prefix' => 'actions'], function () {
+        Route::get('/add', 'SystemController@setAction');
+        Route::get('/edit', 'SystemController@setAction');
+        Route::get('/list', 'SystemController@actionsList');
+        Route::post('/store', 'SystemController@storeAction');
+        Route::get('/delete', 'SystemController@deleteAction');
+    });
 });
