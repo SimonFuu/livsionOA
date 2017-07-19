@@ -36,6 +36,26 @@
 <div class="wrapper">
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper iframe-content-warpper">
+        <div class="alert-area">
+            @if (session('success'))
+                <div class="alert alert-success alert-dismissable">
+                    <button type="button" class="close" data-dismiss="alert"
+                            aria-hidden="true">
+                        &times;
+                    </button>
+                    {{ session('success') }}
+                </div>
+            @endif
+            @if (session('error'))
+                <div class="alert alert-danger alert-dismissable" id="deleteError">
+                    <button type="button" class="close" data-dismiss="alert"
+                            aria-hidden="true">
+                        &times;
+                    </button>
+                    {{ session('error') }}
+                </div>
+            @endif
+        </div>
         @yield('body')
     </div>
 

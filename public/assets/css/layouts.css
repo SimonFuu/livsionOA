@@ -86,6 +86,14 @@ html, body {
     padding-bottom: 0;
 }
 
+.search-header {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 3px;
+    border-bottom-left-radius: 3px;
+    padding: 10px;
+}
+
 .actions-list, .actions-list > thead > tr > th{
     text-align: center;
 }
@@ -94,3 +102,4 @@ html, body {
     max-height: 100px;
     overflow: auto;
 }
+

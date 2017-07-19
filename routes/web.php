@@ -19,10 +19,16 @@ Route::get('/index', function () {
 });
 Route::group(['prefix' => 'system'], function () {
     Route::group(['prefix' => 'actions'], function () {
+        Route::get('/list', 'SystemController@actionsList');
         Route::get('/add', 'SystemController@setAction');
         Route::get('/edit', 'SystemController@setAction');
-        Route::get('/list', 'SystemController@actionsList');
         Route::post('/store', 'SystemController@storeAction');
         Route::get('/delete', 'SystemController@deleteAction');
+    });
+    Route::group(['prefix' => 'roles'], function () {
+        Route::get('/list', 'SystemController@rolesList');
+    });
+    Route::group(['prefix' => 'users'], function () {
+        Route::get('/list', 'SystemController@usersList');
     });
 });

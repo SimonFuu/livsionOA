@@ -218,17 +218,18 @@
             <ul class="sidebar-menu">
             {{--<li class="header">HEADER</li>--}}
             <!-- Optionally, you can add icons to the links -->
-                <li class="active"><a href="#"><i class="fa fa-link"></i> <span>Link</span></a></li>
-                <li><a href="#"><i class="fa fa-link"></i> <span>Another Link</span></a></li>
+                {{--<li class="active"><a href="/system/users/li"><i class="fa fa-link"></i> <span>Link</span></a></li>--}}
+                {{--<li><a href="#"><i class="fa fa-link"></i> <span>Another Link</span></a></li>--}}
                 <li class="treeview">
-                    <a href="#"><i class="fa fa-link"></i> <span>Multilevel</span>
+                    <a href="#/system"><i class="fa fa-link"></i> <span>系统管理</span>
                         <span class="pull-right-container">
                             <i class="fa fa-angle-left pull-right"></i>
                         </span>
                     </a>
                     <ul class="treeview-menu">
-                        <li><a href="#">Link in level 2</a></li>
-                        <li><a href="#">Link in level 2</a></li>
+                        <li><a href="/system/users/list" target="content-iframe">用户管理</a></li>
+                        <li><a href="/system/roles/list" target="content-iframe">角色管理</a></li>
+                        <li><a href="/system/actions/list" target="content-iframe">权限管理</a></li>
                     </ul>
                 </li>
             </ul>
@@ -238,7 +239,7 @@
     </aside>
     <div class="content-wrapper parent-window-content-wapper">
         <section class="content">
-            <iframe src="/system/actions/list" frameborder="0" class="content-iframe"></iframe>
+            <iframe src="/system/users/list" frameborder="0" name="content-iframe" class="content-iframe"></iframe>
         </section>
     </div>
 

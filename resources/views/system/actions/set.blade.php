@@ -1,20 +1,8 @@
 @extends('layouts.layout')
 @section('body')
-    <!-- Content Header (Page header) -->
-    <section class="content-header">
-        <h1>
-            {{ is_null($action) ? '添加' : '编辑'}}权限
-            <small>{{ is_null($action) ? '添加' : '编辑'}}系统权限</small>
-        </h1>
-        <ol class="breadcrumb">
-            <li><a href="/system/actions/list"><i class="fa fa-dashboard"></i>系统管理</a></li>
-            <li><a href="/system/actions/list"><i class="fa fa-dashboard"></i>权限管理</a></li>
-            <li class="active">{{ is_null($action) ? '添加' : '编辑'}}权限</li>
-        </ol>
-    </section>
     <!-- Main content -->
     <section class="content">
-        <div class="box box-info">
+        <div class="box box-{{ is_null($action) ? 'info' : 'primary' }}">
             <div class="box-header with-border">
                 <h3 class="box-title">{{ is_null($action) ? '添加' : '编辑'}}权限</h3>
             </div>
@@ -106,7 +94,7 @@
                 <!-- /.box-body -->
                 <div class="box-footer">
                     <a href="/system/actions/list" class="btn btn-default">返回</a>
-                    <button type="submit" class="btn btn-info pull-right">提交</button>
+                    <button type="submit" class="btn btn-{{ is_null($action) ? 'info' : 'primary' }} pull-right">提交</button>
                 </div>
                 <!-- /.box-footer -->
             {!! Form::close() !!}

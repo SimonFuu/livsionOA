@@ -1,37 +1,5 @@
 @extends('layouts.layout')
 @section('body')
-    <!-- Content Header (Page header) -->
-    <section class="content-header">
-        <h1>
-            权限管理
-            <small>当前系统所有权限</small>
-        </h1>
-        <ol class="breadcrumb">
-            <li><a href="#"><i class="fa fa-dashboard"></i>系统管理</a></li>
-            <li class="active">权限管理</li>
-        </ol>
-    </section>
-        <div class="alert-area">
-            @if (session('success'))
-                <div class="alert alert-success alert-dismissable">
-                    <button type="button" class="close" data-dismiss="alert"
-                            aria-hidden="true">
-                        &times;
-                    </button>
-                    {{ session('success') }}
-                </div>
-            @endif
-            @if (session('error'))
-                <div class="alert alert-danger alert-dismissable" id="deleteError">
-                    <button type="button" class="close" data-dismiss="alert"
-                            aria-hidden="true">
-                        &times;
-                    </button>
-                    {{ session('error') }}
-                </div>
-            @endif
-        </div>
-
     <!-- Main content -->
     <section class="content">
         <div class="box">
@@ -79,6 +47,9 @@
                 </table>
             </div>
             <!-- /.box-body -->
+            <div class="box-footer clearfix">
+                {{ $actions -> links() }}
+            </div>
         </div>
 
     </section>

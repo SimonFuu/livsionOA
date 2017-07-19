@@ -12,7 +12,7 @@ class SystemController extends Controller
         $actions = DB::table('system_actions')
             -> select('id', 'actionName', 'description', 'urls', 'weight', 'parentId')
             -> where('isDelete', 0)
-            -> paginate(20);
+            -> paginate(self::PER_PAGE_RECORD_COUNT);
         return view('system.actions.list', ['actions' => $actions]);
     }
 
@@ -46,7 +46,8 @@ class SystemController extends Controller
         $roles = [
             'actionName' => 'required|max:10',
             'menuUrl' => 'required|max:255',
-            'urls' => 'sometimes|max:1000',
+            'description' => 'required|max:255',
+            'urls' => 'required|max:1000',
             'weight' => 'required|numeric|min:1|max:10000',
         ];
         $message = [
@@ -54,7 +55,9 @@ class SystemController extends Controller
             'actionName.max' => '权限名称不要超过10个字符！',
             'menuUrl.required' => '请输入左侧菜单URL地址！',
             'menuUrl.max' => '长度请不要超过255！',
-            'urls.sometimes' => '请输入权限对应的URL地址，一行一个！',
+            'description.required' => '请输入权限描述',
+            'description.max' => '长度不要超过255！',
+            'urls.required' => '请输入权限对应的URL地址，一行一个！',
             'urls.max' => 'URL地址总体长度不要该超过1000！',
             'weight.required' => '请输入菜单展示权重！',
             'weight.numeric' => '菜单展示权重格式不正确，请输入1-10000的数字！',
@@ -129,5 +132,42 @@ class SystemController extends Controller
             DB::rollback();
             return redirect('/system/actions/list') -> with('error', '删除权限失败：' . $e -> getMessage());
         }
+    }
+
+    public function usersList(Request $request)
+    {
+        $users = DB::table('system_users')
+            -> select('id', 'name', 'gender', 'isAdmin', 'telephone', 'email', 'isDelete')
+            -> where(function ($query) use ($request) {
+                if ($request -> has('name')) {
+                    $this -> searchCondition['name'] = $request -> name;
+                    $query -> where('name', 'like', '%' . $request -> name . '%');
+                }
+                if ($request -> has('telephone')) {
+                    $this -> searchCondition['telephone'] = $request -> telephone;
+                    $query -> where('telephone', $request -> telephone);
+
+                }
+                if ($request -> has('gender') && $request -> gender >= 0) {
+                    $this -> searchCondition['gender'] = $request -> gender;
+                    $query -> where('gender', $request -> gender);
+
+                }
+                if ($request -> has('isAdmin') && $request -> isAdmin >= 0) {
+                    $this -> searchCondition['isAdmin'] = $request -> isAdmin;
+                    $query -> where('isAdmin', $request -> isAdmin);
+                }
+            })
+            -> paginate(self::PER_PAGE_RECORD_COUNT);
+        return view('system.users.list', ['users' => $users, 'sCondition' => $this -> searchCondition]);
+    }
+
+    public function rolesList()
+    {
+        $roles = DB::table('system_roles')
+            -> select('id', 'roleName', 'description')
+            -> where('isDelete', 0)
+            -> paginate(self::PER_PAGE_RECORD_COUNT);
+        return view('system.roles.list', ['roles' => $roles]);
     }
 }
