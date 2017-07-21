@@ -7,6 +7,14 @@ html, body {
     margin-bottom: 0;
 }
 
+th > label {
+    margin-bottom: 0 !important;
+}
+
+td > label {
+    margin-bottom: 0 !important;
+}
+
 .login-padding-15 {
     padding: 15px !important;
 }
@@ -98,8 +106,33 @@ html, body {
     text-align: center;
 }
 
+.role-actions-list, .user-roles-list {
+    max-height: 375px;
+    overflow: auto;
+    margin-right: 0;
+}
+
+.has-error > .col-sm-10 > .role-actions-list, .has-error > .col-sm-10 > .user-roles-list {
+    border: 1px solid #dd4b39;
+}
+
+.has-error > .col-sm-10 > .role-actions-list > .col-sm-3 > table,
+.has-error > .col-sm-10 > .user-roles-list > .col-sm-3 > table {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.has-error > .col-sm-10 > .role-actions-list > .col-sm-3 > table > tbody > tr > td > label,
+.has-error > .col-sm-10 > .user-roles-list > .col-sm-3 > table > tbody > tr > td > label{
+    color: #333 !important;
+}
+
 .actions-list-urls {
     max-height: 100px;
     overflow: auto;
 }
 
+.child-role-action-label {
+    font-weight: 100;
+    margin-left: 15px;
+}

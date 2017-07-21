@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\Request;
+use Auth;
+use Illuminate\Support\Facades\DB;
 
 class LoginController extends Controller
 {
@@ -25,7 +28,7 @@ class LoginController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/home';
+    protected $redirectTo = '/index';
 
     /**
      * Create a new controller instance.
@@ -35,5 +38,54 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
+    }
+
+    private function username()
+    {
+        return 'username';
+    }
+
+    public function showLoginForm()
+    {
+        if (Auth::check()) {
+            return redirect($this -> redirectTo);
+        }
+        return view('login');
+    }
+
+    public function loginCheck(Request $request)
+    {
+        if (Auth::attempt(['username' => $request -> username, 'password' => $request -> password])) {
+            if (Auth::user() -> isActive == 0) {
+                return redirect('/panel/init/password');
+            }
+            $userRolesId = [];
+            $userRolesItems = DB::table('system_users_roles')
+                -> select('rid') -> where('isDelete', 0) -> where('uid', Auth::user() -> id) -> get();
+            if (count($userRolesItems) !== 0) {
+                foreach ($userRolesItems as $item) {
+                    $userRolesId[] = $item -> rid;
+                }
+                $roles = $this -> getRoleActionsInfo($userRolesId);
+                dd($roles);
+            } else {
+                return redirect('/login') -> with('error', '用户角色状态异常，请联系管理员！');
+            }
+        } else {
+            return $this -> sendFailedLoginResponse($request);
+        }
+    }
+
+    protected function sendFailedLoginResponse(Request $request)
+    {
+        $errors = [$this->username() => '用户名或密码错误，请重试！'];
+
+        if ($request->expectsJson()) {
+            return response()->json($errors, 422);
+        }
+
+        return redirect()->back()
+            ->withInput($request->only($this->username(), 'remember'))
+            ->withErrors($errors);
     }
 }

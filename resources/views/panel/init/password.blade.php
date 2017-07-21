@@ -29,48 +29,32 @@
             Logo
         </div>
         <div class="login-form">
-        {!! Form::open(['url' => '/login', 'method' => 'POST', 'class' => 'form-horizontal', 'role' => 'form']) !!}
+        {!! Form::open(['url' => '/panel/init/password', 'method' => 'POST', 'class' => 'form-horizontal', 'role' => 'form']) !!}
         <!-- class include {'form-horizontal'|'form-inline'} -->
-            <header><i class="fa fa-users"></i> 登录</header>
+            <header><i class="fa fa-users"></i> 修改密码</header>
             <div class="login-form-filed">
-                @if (session('success'))
-                    <div class="form-group">
-                        <div class="alert alert-success alert-dismissable">
-                            <button type="button" class="close" data-dismiss="alert"
-                                    aria-hidden="true">
-                                &times;
-                            </button>
-                            {{ session('success') }}
-                        </div>
-                    </div>
-                @endif
-                <!--- Username Field --->
-                <div class="form-group {{ $errors -> has('username') ? 'has-error' : '' }}">
-                    {!! Form::label('username', '用户名:', ['class' => 'control-label']) !!}
-                    {!! Form::text('username', null, ['class' => 'form-control']) !!}
+                <div class="form-group init-password-notice">
+                    <div class="alert alert-info" role="alert">首次登录系统，请先修改密码！</div>
                 </div>
                 <!--- Password Field --->
-                <div class="form-group {{ $errors -> has('username') ? 'has-error' : '' }}">
+                <div class="form-group {{ $errors -> has('password') ? 'has-error' : '' }}">
                     {!! Form::label('password', '密码:', ['class' => 'control-label']) !!}
-                    {!! Form::password('password', ['class' => 'form-control']) !!}
-                    @if($errors -> has('username'))
+                    {!! Form::password('password', null, ['class' => 'form-control']) !!}
+                </div>
+                <!--- Password Confirmation Field --->
+                <div class="form-group {{ $errors -> has('password') ? 'has-error' : '' }}">
+                    {!! Form::label('password_confirmation', '确认密码:', ['class' => 'control-label']) !!}
+                    {!! Form::password('password_confirmation', ['class' => 'form-control']) !!}
+                    @if($errors -> has('password'))
                         <span class="help-block">
-                            <strong>{{ $errors -> first('username') }}</strong>
+                            <strong>{{ $errors -> first('password') }}</strong>
                         </span>
                     @endif
-                </div>
-                <div class="form-group login-remember-me">
-                    <label>
-                        <input type="checkbox"> 记住我
-                    </label>
                 </div>
                 <hr>
             </div>
             <footer>
-                {{--<div class="login-footers login-forget-password pull-left">--}}
-                    {{--<a href="">忘记密码?</a>--}}
-                {{--</div>--}}
-                <button class="login-footers btn btn-info pull-right" type="submit">登录</button>
+                <button class="login-footers btn btn-info pull-right" type="submit">修改</button>
             </footer>
             {!! Form::close() !!}
         </div>

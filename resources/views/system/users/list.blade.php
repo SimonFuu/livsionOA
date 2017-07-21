@@ -2,6 +2,13 @@
 @section('body')
     <!-- Main content -->
     <section class="content">
+        <div class="alert alert-info alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert"
+                    aria-hidden="true">
+                &times;
+            </button>
+            <i class="icon fa fa-warning"></i>本页面仅管理后台管理员用户！如需添加业务用户，请到 <a href="#"><strong>人员管理</strong></a>！
+        </div>
         <div class="box">
             <div class="box-header">
                 <h3 class="box-title">用户列表</h3>
@@ -30,16 +37,10 @@
                             {!! Form::label('gender', '性别:', ['class' => 'control-label']) !!}
                             {!! Form::select('gender', [-1 => '请选择', '男', '女'], isset($sCondition['gender']) ? $sCondition['gender'] : null, ['class' => 'form-control', 'placeholder' => '请选择']) !!}
                         </div>
-                        <!--- IsAdmin Field --->
-                        <div class="form-group form-group-sm">
-                            {!! Form::label('isAdmin', '管理员:', ['class' => 'control-label']) !!}
-                            {!! Form::select('isAdmin', [-1 => '请选择', '否', '是'], isset($sCondition['isAdmin']) ? $sCondition['isAdmin'] : null, ['class' => 'form-control']) !!}
-                        </div>
                         <input type="submit" class="btn btn-info btn-sm" value="查询">
                     {!! Form::close() !!}
                     <hr>
                 </div>
-                {{--'id', 'name', 'gender', 'isAdmin', 'telephone', 'email', 'isDelete'--}}
                 <table class="table table-hover actions-list">
                     <thead>
                         <tr>
@@ -48,8 +49,6 @@
                             <th width="50">性别</th>
                             <th width="100">电话</th>
                             <th width="200">邮箱</th>
-                            <th width="50">管理员</th>
-                            <th width="50">状态</th>
                             <th width="50">操作</th>
                         </tr>
                     </thead>
@@ -58,11 +57,9 @@
                             <tr>
                                 <td>{{ $user -> id }}</td>
                                 <td>{{ $user -> name }}</td>
-                                <td>{{ $user -> gender ? '男' : '女' }}</td>
+                                <td>{{ $user -> gender == 0 ? '男' : '女' }}</td>
                                 <td>{{ $user -> telephone }}</td>
                                 <td>{{ $user -> email }}</td>
-                                <td>{{ $user -> isAdmin ? '是' : '否' }}</td>
-                                <td>{{ $user -> isDelete ? '<span class="badge bg-red">已删除</span>' : '<span class="badge bg-green">正常</span>'}}</td>
                                 <td>
                                     <a href="/system/users/edit?id={{ $user -> id }}"><i class="fa fa-pencil-square-o"></i></a>
                                     &nbsp;
