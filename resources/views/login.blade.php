@@ -19,7 +19,6 @@
         <script src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
         <script src="//cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     @endif
-
 </head>
 <body>
 <div class="login-padding-15">
@@ -41,6 +40,17 @@
                                 &times;
                             </button>
                             {{ session('success') }}
+                        </div>
+                    </div>
+                @endif
+                @if (session('error'))
+                    <div class="form-group">
+                        <div class="alert alert-danger alert-dismissable">
+                            <button type="button" class="close" data-dismiss="alert"
+                                    aria-hidden="true">
+                                &times;
+                            </button>
+                            {{ session('error') }}
                         </div>
                     </div>
                 @endif

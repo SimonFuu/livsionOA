@@ -7,6 +7,7 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 
 class LoginController extends Controller
 {
@@ -67,8 +68,11 @@ class LoginController extends Controller
                     $userRolesId[] = $item -> rid;
                 }
                 $roles = $this -> getRoleActionsInfo($userRolesId);
-                dd($roles);
+                Session::put('menus', $roles['menus']);
+                Session::put('permissions', $roles['permissions']);
+                return redirect($this -> redirectTo);
             } else {
+                Auth::logout();
                 return redirect('/login') -> with('error', '用户角色状态异常，请联系管理员！');
             }
         } else {
@@ -87,5 +91,16 @@ class LoginController extends Controller
         return redirect()->back()
             ->withInput($request->only($this->username(), 'remember'))
             ->withErrors($errors);
+    }
+
+    public function logout(Request $request)
+    {
+        $this->guard()->logout();
+
+        $request->session()->flush();
+
+        $request->session()->regenerate();
+
+        return redirect('/login') -> with('success', '已退出登录！');
     }
 }

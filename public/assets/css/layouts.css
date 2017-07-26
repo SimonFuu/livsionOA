@@ -15,29 +15,29 @@ td > label {
     margin-bottom: 0 !important;
 }
 
-.login-padding-15 {
+.login-padding-15, .init-password-padding-15 {
     padding: 15px !important;
 }
 
-.login-box {
+.login-box, .init-password-box {
     margin: auto;
     margin-top: 10%;
     width: 360px;
     height: 384px;
 }
 
-.login-logo {
+.login-logo, .init-password-logo {
     padding: 15px;
     text-align: center;
 }
 
-.login-form {
+.login-form, .init-password-form {
     margin-top: 20px;
     background: #fff;
     border: 2px solid rgb(223,223,223);
 }
 
-.login-form > form > header {
+.login-form > form > header, .init-password-form > form > header {
     margin: 0;
     background: #F5F5F5;
     background-color: rgba(0, 0, 0, 0);
@@ -51,11 +51,11 @@ td > label {
     font-weight: 400;
 }
 
-.login-form-filed {
+.login-form-filed, .init-password-form-filed {
     padding: 15px;
 }
 
-.login-form-filed > .form-group {
+.login-form-filed > .form-group, .init-password-form-filed > .form-group {
     margin: 0;
 }
 
@@ -63,12 +63,12 @@ td > label {
     margin-top: 7px !important;
 }
 
-.login-form > form > footer {
+.login-form > form > footer, .init-password-form > form > footer {
     height: 30px;
     padding: 15px 15px 25px;
 }
 
-.login-footers {
+.login-footers, .init-password-footers {
     margin-top: -30px;
 }
 

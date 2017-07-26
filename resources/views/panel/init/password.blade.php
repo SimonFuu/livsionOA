@@ -22,24 +22,24 @@
 
 </head>
 <body>
-<div class="login-padding-15">
-    <div class="login-box">
-        <div class="login-logo">
+<div class="init-password-padding-15">
+    <div class="init-password-box">
+        <div class="init-password-logo">
             {{--<img src="" alt="">--}}
             Logo
         </div>
-        <div class="login-form">
+        <div class="init-password-form">
         {!! Form::open(['url' => '/panel/init/password', 'method' => 'POST', 'class' => 'form-horizontal', 'role' => 'form']) !!}
         <!-- class include {'form-horizontal'|'form-inline'} -->
             <header><i class="fa fa-users"></i> 修改密码</header>
-            <div class="login-form-filed">
+            <div class="init-password-form-filed">
                 <div class="form-group init-password-notice">
                     <div class="alert alert-info" role="alert">首次登录系统，请先修改密码！</div>
                 </div>
                 <!--- Password Field --->
                 <div class="form-group {{ $errors -> has('password') ? 'has-error' : '' }}">
                     {!! Form::label('password', '密码:', ['class' => 'control-label']) !!}
-                    {!! Form::password('password', null, ['class' => 'form-control']) !!}
+                    {!! Form::password('password', ['class' => 'form-control']) !!}
                 </div>
                 <!--- Password Confirmation Field --->
                 <div class="form-group {{ $errors -> has('password') ? 'has-error' : '' }}">
@@ -54,7 +54,7 @@
                 <hr>
             </div>
             <footer>
-                <button class="login-footers btn btn-info pull-right" type="submit">修改</button>
+                <button class="init-password-footers btn btn-info pull-right" type="submit">修改</button>
             </footer>
             {!! Form::close() !!}
         </div>

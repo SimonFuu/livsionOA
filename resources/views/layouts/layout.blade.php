@@ -43,7 +43,7 @@
                             aria-hidden="true">
                         &times;
                     </button>
-                    {{ session('success') }}
+                    {!! session('success') !!}
                 </div>
             @endif
             @if (session('error'))
@@ -52,7 +52,7 @@
                             aria-hidden="true">
                         &times;
                     </button>
-                    {{ session('error') }}
+                    {!! session('error') !!}
                 </div>
             @endif
         </div>
