@@ -15,6 +15,9 @@ td > label {
     margin-bottom: 0 !important;
 }
 
+.error-content {
+    padding-top: 10px;
+}
 .login-padding-15, .init-password-padding-15 {
     padding: 15px !important;
 }

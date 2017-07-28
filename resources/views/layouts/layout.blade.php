@@ -67,8 +67,9 @@
     <div class="control-sidebar-bg"></div>
 </div>
 @if(env('APP_ENV') === 'local')
-    <script src="/assets/plugins/AdminLte/js/app.min.js"></script>
     <script src="/assets/js/app.js?v={{ date('YmdHi') }}"></script>
+    <script src="/assets/plugins/AdminLte/js/app.min.js"></script>
+
 @else
     <script src="//cdn.bootcss.com/admin-lte/2.3.11/js/app.min.js"></script>
     <script src="/assets/js/app.js?v={{ env('APP_ASSETS_VERSION') }}"></script>

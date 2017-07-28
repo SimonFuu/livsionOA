@@ -171,25 +171,25 @@
                             <!-- Menu Body -->
                             <li class="user-body">
                                 {{--<div class="row">--}}
-                                    {{--<div class="col-xs-4 text-center">--}}
-                                        {{--<a href="#">Followers</a>--}}
-                                    {{--</div>--}}
-                                    {{--<div class="col-xs-4 text-center">--}}
-                                        {{--<a href="#">Sales</a>--}}
-                                    {{--</div>--}}
-                                    {{--<div class="col-xs-4 text-center">--}}
-                                        {{--<a href="#">Friends</a>--}}
-                                    {{--</div>--}}
+                                {{--<div class="col-xs-4 text-center">--}}
+                                {{--<a href="#">Followers</a>--}}
+                                {{--</div>--}}
+                                {{--<div class="col-xs-4 text-center">--}}
+                                {{--<a href="#">Sales</a>--}}
+                                {{--</div>--}}
+                                {{--<div class="col-xs-4 text-center">--}}
+                                {{--<a href="#">Friends</a>--}}
+                                {{--</div>--}}
                                 {{--</div>--}}
                                 {{--<!-- /.row -->--}}
                             </li>
                             <!-- Menu Footer-->
                             <li class="user-footer">
                                 <div class="pull-left">
-                                    <a href="#" class="btn btn-default btn-flat">Profile</a>
+                                    <a href="/panel/user/center?id={{ Auth() -> user() -> id}}" class="btn btn-default btn-flat" target="content-iframe">个人中心</a>
                                 </div>
                                 <div class="pull-right">
-                                    <a href="/logout" class="btn btn-default btn-flat">Sign out</a>
+                                    <a href="/logout" class="btn btn-default btn-flat">退出</a>
                                 </div>
                             </li>
                         </ul>
@@ -216,21 +216,20 @@
             </div>
             <!-- Sidebar Menu -->
             <ul class="sidebar-menu">
-                <li class="active"><a href="/panel/init/password" target="content-iframe"><i class="fa fa-link"></i> <span>Link</span></a></li>
                 @foreach(session('menus') as $key => $menu)
                     @if($menu['childrenMenus'])
-                        <li class="treeview">
-                            <a href="#{{ $menu['menuUrl'] }}" target="content-iframe"><i class="fa fa-link"></i> <span>{{ $menu['actionName'] }}</span>
+                        <li class="sidebar-menu-item treeview">
+                            <a href="javascript:void(0)"><i class="fa fa-link"></i> <span>{{ $menu['actionName'] }}</span>
                                 <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
                             </a>
-                            @foreach($menu['childrenMenus'] as $childMenu)
-                                <ul class="treeview-menu">
+                            <ul class="treeview-menu" style="display: none">
+                                @foreach($menu['childrenMenus'] as $childMenu)
                                     <li><a href="{{ $childMenu['menuUrl'] }}" target="content-iframe"><span class="fa fa-circle-o"></span>{{ $childMenu['actionName'] }}</a></li>
-                                </ul>
-                            @endforeach
+                                @endforeach
+                            </ul>
                         </li>
                     @else
-                        <li class="{{ $key == 0 ? 'active' : '' }}"><a href="{{ $menu['menuUrl'] }}" target="content-iframe"><i class="fa fa-link"></i> <span>{{ $menu['actionName'] }}</span></a></li>
+                        <li class="sidebar-menu-item {{ $key == 0 ? 'active' : '' }}"><a href="{{ $menu['menuUrl'] }}" target="content-iframe"><i class="fa fa-link"></i> <span>{{ $menu['actionName'] }}</span></a></li>
                     @endif
                 @endforeach
             </ul>
@@ -239,9 +238,9 @@
         <!-- /.sidebar -->
     </aside>
     <div class="content-wrapper parent-window-content-wapper">
-        <section class="content">
+        <div class="content body">
             <iframe src="main" frameborder="0" name="content-iframe" class="content-iframe"></iframe>
-        </section>
+        </div>
     </div>
 
     <!-- Main Footer -->
@@ -254,12 +253,12 @@
         <strong>Copyright &copy; {{ date('Y') }} <a href="#">Livsion, inc</a>.</strong> All rights reserved.
     </footer>
 </div>
-    @if(env('APP_ENV') === 'local')
-        <script src="/assets/plugins/AdminLte/js/app.min.js"></script>
-        <script src="/assets/js/app.js?v={{ date('YmdHi') }}"></script>
-    @else
-        <script src="//cdn.bootcss.com/admin-lte/2.3.11/js/app.min.js"></script>
-        <script src="/assets/js/app.js?v={{ env('APP_ASSETS_VERSION') }}"></script>
-    @endif
+@if(env('APP_ENV') === 'local')
+    <script src="/assets/plugins/AdminLte/js/app.min.js"></script>
+    <script src="/assets/js/app.js?v={{ date('YmdHi') }}"></script>
+@else
+    <script src="//cdn.bootcss.com/admin-lte/2.3.11/js/app.min.js"></script>
+    <script src="/assets/js/app.js?v={{ env('APP_ASSETS_VERSION') }}"></script>
+@endif
 </body>
 </html>

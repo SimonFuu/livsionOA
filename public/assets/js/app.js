@@ -12,6 +12,29 @@ var resizeIFrame = function () {
     });
 };
 
+var sidebarClick = function () {
+    $('.sidebar-menu-item').on('click', function () {
+        $(this).siblings('li').each(function (index, element) {
+            $(element).removeClass('active');
+            if ($(element).hasClass('treeview')) {
+                $(element).children('.treeview-menu').css('display', 'none');
+            }
+        });
+        if (!$(this).hasClass('active')) {
+            $(this).addClass('active')
+        }
+    });
+
+    $('.treeview-menu > li').on('click', function () {
+        $(this).siblings('li').each(function (index, element) {
+            $(element).removeClass('active');
+        });
+        if (!$(this).hasClass('active')) {
+            $(this).addClass('active')
+        }
+    });
+};
+
 var roleActionsCheckboxRelate = function () {
     $('.parentRoleAction').on('click', function () {
         if ($(this).is(':checked')) {
@@ -42,5 +65,6 @@ var roleActionsCheckboxRelate = function () {
 };
 $(document).ready(function () {
     resizeIFrame();
+    sidebarClick();
     roleActionsCheckboxRelate();
 });
