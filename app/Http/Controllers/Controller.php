@@ -24,7 +24,7 @@ class Controller extends BaseController
         $cMenus = [];  // 临时存放二级菜单 key为父级菜单的id
         if ($roleId == 0) {
             $rawActions = DB::table('system_actions')
-                -> select('id', 'actionName', 'description', 'menuUrl', 'urls', 'parentId')
+                -> select('id', 'actionName', 'description', 'menuUrl', 'icon', 'urls', 'parentId')
                 -> orderBy('weight', 'ASC')
                 -> where('isDelete', 0)
                 -> get();
@@ -32,7 +32,7 @@ class Controller extends BaseController
             if (is_array($roleId)) {
                 $rawActions = DB::table('system_actions')
                     -> select('system_actions.id', 'system_actions.actionName', 'system_actions.description',
-                        'system_actions.menuUrl', 'system_actions.urls', 'system_actions.parentId')
+                        'system_actions.menuUrl', 'system_actions.icon', 'system_actions.urls', 'system_actions.parentId')
                     -> leftJoin('system_roles_actions', 'system_roles_actions.aid', '=', 'system_actions.id')
                     -> orderBy('system_actions.weight', 'ASC')
                     -> where('system_actions.isDelete', 0)
@@ -42,7 +42,7 @@ class Controller extends BaseController
             } else {
                 $rawActions = DB::table('system_actions')
                     -> select('system_actions.id', 'system_actions.actionName', 'system_actions.description',
-                        'system_actions.menuUrl', 'system_actions.urls', 'system_actions.parentId')
+                        'system_actions.menuUrl', 'system_actions.icon', 'system_actions.urls', 'system_actions.parentId')
                     -> leftJoin('system_roles_actions', 'system_roles_actions.aid', '=', 'system_actions.id')
                     -> orderBy('system_actions.weight', 'ASC')
                     -> where('system_actions.isDelete', 0)
@@ -61,6 +61,7 @@ class Controller extends BaseController
                         'id' => $rawAction -> id,
                         'actionName' => $rawAction -> actionName,
                         'menuUrl' => $rawAction -> menuUrl,
+                        'icon' => $rawAction -> icon,
                         'childrenMenus' => []
                     ];
                 } else {
@@ -68,6 +69,7 @@ class Controller extends BaseController
                         'id' => $rawAction -> id,
                         'actionName' => $rawAction -> actionName,
                         'menuUrl' => $rawAction -> menuUrl,
+                        'icon' => $rawAction -> icon,
                     ];
                 }
             }

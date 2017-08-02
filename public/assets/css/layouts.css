@@ -15,9 +15,18 @@ td > label {
     margin-bottom: 0 !important;
 }
 
+
+@media screen and (max-width:1240px) {
+    .error-content > p {
+        text-align: center;
+        font-size: 18px;
+    }
+}
+
 .error-content {
     padding-top: 10px;
 }
+
 .login-padding-15, .init-password-padding-15 {
     padding: 15px !important;
 }
@@ -85,7 +94,7 @@ td > label {
 }
 
 .parent-window-content-wapper > .content{
-    padding-right: 0 !important;
+    padding: 0 !important;
 }
 
 .iframe-content-warpper {
@@ -138,4 +147,28 @@ td > label {
 .child-role-action-label {
     font-weight: 100;
     margin-left: 15px;
+}
+
+.set-actions-icons-list {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.set-actions-icons-list > thead > tr > td {
+    padding-bottom: 10px;
+    min-width: 38px;
+}
+.set-actions-icons-list > tbody > tr > td {
+    min-width: 38px;
+}
+
+.set-actions-icon-label {
+    width: 100%;
+    font-weight: normal;
+}
+
+.set-action-icon, .set-actions-icon-button {
+    width: 38px;
+    text-align: center;
+    max-width: 38px;
 }

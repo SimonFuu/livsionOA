@@ -38,7 +38,15 @@ class SystemController extends Controller
                 $pActions['二级菜单'][$pAct -> id] = $pAct -> actionName;
             }
         }
-        return view('system.actions.set', ['action' => $action, 'pActions' => $pActions]);
+        $icons = [];
+        $iconsItems = DB::table('system_icons')
+            -> select('icon') -> get();
+        if ($iconsItems) {
+            foreach ($iconsItems as $iconItem) {
+                $icons[] = $iconItem -> icon;
+            }
+        }
+        return view('system.actions.set', ['action' => $action, 'pActions' => $pActions, 'icons' => json_encode($icons)]);
     }
 
     public function storeAction(Request $request)
@@ -50,6 +58,7 @@ class SystemController extends Controller
             'description' => 'required|max:255',
             'urls' => 'required|max:1000',
             'weight' => 'required|numeric|min:1|max:10000',
+            'icon' => 'required|exists:system_icons,icon'
         ];
         $message = [
             'actionName.required' => '请输入权限名称！',
@@ -65,6 +74,8 @@ class SystemController extends Controller
             'weight.numeric' => '菜单展示权重格式不正确，请输入1-10000的数字！',
             'weight.min' => '菜单展示权重格式不正确，请输入1-10000的数字！',
             'weight.max' => '菜单展示权重格式不正确，请输入1-10000的数字！',
+            'icon.required' => '请选择菜单图标！',
+            'icon.exists' => '请选择系统提供的图标！'
         ];
         $this -> validate($request, $rules, $message);
         if ($request -> has('id')) {
@@ -76,10 +87,6 @@ class SystemController extends Controller
 
     private function storeNewAction(Request $request)
     {
-//        $this -> validate($request,
-//            ['actionName' => 'unique:system_actions,actionName,NULL,id,isDelete,0'],
-//            ['unique' => '已存在同名的权限，请确认！']
-//        );
         $req = $request -> except('_token');
         if ($request -> has('urls')) {
             $req['urls'] = json_encode(explode("\r\n", $request -> urls));
@@ -95,10 +102,6 @@ class SystemController extends Controller
 
     private function updateExistAction(Request $request)
     {
-//        $this -> validate($request,
-//            ['actionName' => 'unique:system_actions,actionName,' . $request -> id . ',id,isDelete,0'],
-//            ['unique' => '已存在同名的权限，请确认！']
-//        );
         $req = $request -> except('_token');
         if ($request -> has('urls')) {
             $req['urls'] = json_encode(explode("\r\n", $request -> urls));

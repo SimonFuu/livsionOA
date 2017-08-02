@@ -38,11 +38,11 @@
     <header class="main-header">
 
         <!-- Logo -->
-        <a href="index2.html" class="logo">
+        <a href="/index" class="logo">
             <!-- mini logo for sidebar mini 50x50 pixels -->
-            <span class="logo-mini"><b>A</b>LT</span>
+            <span class="logo-mini"><b>后台</b></span>
             <!-- logo for regular state and mobile devices -->
-            <span class="logo-lg"><b>Admin</b>LTE</span>
+            <span class="logo-lg"><b>管理</b>后台</span>
         </a>
 
         <!-- Header Navbar -->
@@ -70,7 +70,7 @@
                                         <a href="#">
                                             <div class="pull-left">
                                                 <!-- User Image -->
-                                                <img src="/assets/images/user2-160x160.jpg" class="img-circle" alt="User Image">
+                                                <img src="{{ env('APP_FILE_SERVER_URL') . Auth() -> user() -> avatar }}" class="img-circle" alt="User Image">
                                             </div>
                                             <!-- Message title and timestamp -->
                                             <h4>
@@ -168,21 +168,6 @@
                                     <small>Member since {{ date("D, d M Y", strtotime(Auth() -> user() -> addTime)) }}</small>
                                 </p>
                             </li>
-                            <!-- Menu Body -->
-                            <li class="user-body">
-                                {{--<div class="row">--}}
-                                {{--<div class="col-xs-4 text-center">--}}
-                                {{--<a href="#">Followers</a>--}}
-                                {{--</div>--}}
-                                {{--<div class="col-xs-4 text-center">--}}
-                                {{--<a href="#">Sales</a>--}}
-                                {{--</div>--}}
-                                {{--<div class="col-xs-4 text-center">--}}
-                                {{--<a href="#">Friends</a>--}}
-                                {{--</div>--}}
-                                {{--</div>--}}
-                                {{--<!-- /.row -->--}}
-                            </li>
                             <!-- Menu Footer-->
                             <li class="user-footer">
                                 <div class="pull-left">
@@ -219,17 +204,17 @@
                 @foreach(session('menus') as $key => $menu)
                     @if($menu['childrenMenus'])
                         <li class="sidebar-menu-item treeview">
-                            <a href="javascript:void(0)"><i class="fa fa-link"></i> <span>{{ $menu['actionName'] }}</span>
+                            <a href="javascript:void(0)"><i class="fa {{ $menu['icon'] }}" aria-hidden="true"></i><span> {{ $menu['actionName'] }}</span>
                                 <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
                             </a>
                             <ul class="treeview-menu" style="display: none">
                                 @foreach($menu['childrenMenus'] as $childMenu)
-                                    <li><a href="{{ $childMenu['menuUrl'] }}" target="content-iframe"><span class="fa fa-circle-o"></span>{{ $childMenu['actionName'] }}</a></li>
+                                    <li><a href="{{ $childMenu['menuUrl'] }}" target="content-iframe"><i class="fa {{ $childMenu['icon'] }}" aria-hidden="true"></i>{{ $childMenu['actionName'] }}</a></li>
                                 @endforeach
                             </ul>
                         </li>
                     @else
-                        <li class="sidebar-menu-item {{ $key == 0 ? 'active' : '' }}"><a href="{{ $menu['menuUrl'] }}" target="content-iframe"><i class="fa fa-link"></i> <span>{{ $menu['actionName'] }}</span></a></li>
+                        <li class="sidebar-menu-item {{ $key == 0 ? 'active' : '' }}"><a href="{{ $menu['menuUrl'] }}" target="content-iframe"><i class="fa {{ $menu['icon'] }}" aria-hidden="true"></i><span> {{ $menu['actionName'] }}</span></a></li>
                     @endif
                 @endforeach
             </ul>
@@ -250,7 +235,7 @@
             Code By <a href="https://www.fushupeng.com" target="_blank">Simon Fu</a>
         </div>
         <!-- Default to the left -->
-        <strong>Copyright &copy; {{ date('Y') }} <a href="#">Livsion, inc</a>.</strong> All rights reserved.
+        <strong>Copyright &copy; {{ date('Y') }}.</strong> All rights reserved.
     </footer>
 </div>
 @if(env('APP_ENV') === 'local')

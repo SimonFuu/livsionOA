@@ -70,6 +70,9 @@ class LoginController extends Controller
                 $roles = $this -> getRoleActionsInfo($userRolesId);
                 Session::put('menus', $roles['menus']);
                 Session::put('permissions', $roles['permissions']);
+                DB::table('system_users')
+                    -> where('id', Auth::user() -> id)
+                    -> increment('loginTimes', 1, ['lastLoginIp' => $request -> ip()]);
                 return redirect($this -> redirectTo);
             } else {
                 Auth::logout();

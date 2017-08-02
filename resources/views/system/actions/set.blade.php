@@ -35,13 +35,29 @@
                             @endif
                         </div>
                     </div>
+                    <!--- Icon Field --->
+                    <div class="form-group {{ $errors -> has('icon') ? 'has-error' : '' }}">
+                        {!! Form::label('menuUrl', '菜单图标:', ['class' => 'col-sm-2 control-label']) !!}
+                        <div class="col-sm-10">
+                            <button class="btn btn-{{ $errors -> has('icon') ? 'danger' : 'default' }} set-action-icon" type="button" data-toggle="modal" data-target="#setActionIconModal"><i class="fa fa-circle-o" aria-hidden="true"></i></button>
+                            &nbsp;&nbsp;&nbsp;<i class="fa fa-hand-o-left" aria-hidden="true"></i> 请点击选择图标
+                            <input class="set-action-icon-value" type="hidden" name="icon" value="fa-circle-o">
+                            @if($errors -> has('icon'))
+                                <span class="help-block form-help-block">
+                                    <strong>{{ $errors -> first('icon') }}</strong>
+                                </span>
+                            @endif
+                        </div>
+                    </div>
                     <!--- Urls Field --->
                     <div class="form-group {{ $errors -> has('urls') ? 'has-error' : '' }}">
                         {!! Form::label('urls', 'Urls:', ['class' => 'col-sm-2 control-label']) !!}
                         <div class="col-sm-10">
                             @if(!is_null($action))
-                                @php($urls = json_decode($action -> urls, true))
-                                @php($urls = (implode("\r\n", ($urls ? $urls : []))))
+                                @php
+                                    $urls = json_decode($action -> urls, true);
+                                    $urls = (implode("\r\n", ($urls ? $urls : [])));
+                                @endphp
                             @endif
                             {!! Form::textarea('urls', is_null($action) ? null : $urls, ['class' => 'form-control', 'rows' => 5, 'placeholder' => '权限所有URL，一行一个！']) !!}
                             @if($errors -> has('urls'))
@@ -101,4 +117,7 @@
         </div>
     </section>
     <!-- /.content -->
+    <script>
+        var actionIcons = '{!! $icons !!}';
+    </script>
 @endsection

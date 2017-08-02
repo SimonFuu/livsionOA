@@ -13,15 +13,15 @@ class CreateSystemRolesActions extends Migration
      */
     public function up()
     {
-//        Schema::create('system_roles_actions', function (Blueprint $table) {
-//            $table->increments('id')->comment('主键');
-//            $table->integer('rid', false, true)->comment('角色ID');
-//            $table->integer('aid', false, true)->comment('权限ID');
-//            $table->dateTime('addTime')->comment('创建时间')->default(\DB::raw('CURRENT_TIMESTAMP'));
-//            $table->dateTime('updateTime')
-//                ->comment('修改时间')->default(\DB::raw('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'));
-//            $table->unsignedTinyInteger('isDelete', false)->default(0)->comment('是否删除：0-否，1-是');
-//        });
+        Schema::create('system_roles_actions', function (Blueprint $table) {
+            $table->increments('id')->comment('主键');
+            $table->integer('rid', false, true)->comment('角色ID');
+            $table->integer('aid', false, true)->comment('权限ID');
+            $table->dateTime('addTime')->comment('创建时间')->default(\DB::raw('CURRENT_TIMESTAMP'));
+            $table->dateTime('updateTime')
+                ->comment('修改时间')->default(\DB::raw('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'));
+            $table->unsignedTinyInteger('isDelete', false)->default(0)->comment('是否删除：0-否，1-是');
+        });
     }
 
     /**
