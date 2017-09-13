@@ -23,6 +23,10 @@ td > label {
     }
 }
 
+.user-panel {
+    height: 65px;
+}
+
 .error-content {
     padding-top: 10px;
 }
@@ -87,6 +91,42 @@ td > label {
 .login-forget-password {
     height: 34px;
     line-height: 34px;
+}
+
+.user-profile-table > tbody > tr > td, .user-profile-table > tbody > tr > th{
+    height: 75px;
+    line-height: 75px;
+}
+
+.user-profile-avatar {
+    border: 1px solid rgb(237,239,245);
+    margin-left: 50px;
+    width: 165px;
+    padding: 3px;
+    text-align: center;
+    border-radius: 5px;
+    background: #ffffff;
+}
+
+.user-profile-input {
+    margin-top: 20px;
+}
+
+.kv-avatar .krajee-default.file-preview-frame,.kv-avatar .krajee-default.file-preview-frame:hover {
+    margin: 0;
+    padding: 0;
+    border: none;
+    box-shadow: none;
+    text-align: center;
+}
+.kv-avatar .file-input {
+    display: table-cell;
+    max-width: 220px;
+}
+.kv-reqd {
+    color: red;
+    font-family: monospace;
+    font-weight: normal;
 }
 
 .content-iframe {

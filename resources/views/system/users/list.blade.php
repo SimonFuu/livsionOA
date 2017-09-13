@@ -48,6 +48,7 @@
                             <th width="100">姓名</th>
                             <th width="50">性别</th>
                             <th width="100">电话</th>
+                            <th width="100">办公电话</th>
                             <th width="200">邮箱</th>
                             <th width="50">操作</th>
                         </tr>
@@ -59,6 +60,7 @@
                                 <td>{{ $user -> name }}</td>
                                 <td>{{ $user -> gender == 0 ? '男' : '女' }}</td>
                                 <td>{{ $user -> telephone }}</td>
+                                <td>{{ $user -> officeTel }}</td>
                                 <td>{{ $user -> email }}</td>
                                 <td>
                                     <a href="/system/users/edit?id={{ $user -> id }}"><i class="fa fa-pencil-square-o"></i></a>

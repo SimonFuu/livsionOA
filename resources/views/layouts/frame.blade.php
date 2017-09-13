@@ -165,7 +165,9 @@
 
                                 <p>
                                     {{ Auth() -> user() -> name }}
-                                    <small>Member since {{ date("D, d M Y", strtotime(Auth() -> user() -> addTime)) }}</small>
+                                    <small>加入时间 {{ date("D, d M Y", strtotime(Auth() -> user() -> addTime)) }}</small>
+                                    <small>上次登录IP: <strong>{{ Auth() -> user() -> lastLoginIp }}</strong>. 登录次数: <strong>{{ Auth() -> user() -> loginTimes }}</strong></small>
+
                                 </p>
                             </li>
                             <!-- Menu Footer-->

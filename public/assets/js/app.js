@@ -209,9 +209,30 @@ var searchIconsArray =  function(str, container) {
     return vResult;
 };
 
+var uploadFiles = function () {
+    var avatarImg = $(".kv-avatar").data('avatar');
+    $("#avatar").fileinput({
+        overwriteInitial: true,
+        maxFileSize: 1500,
+        showClose: false,
+        showCaption: false,
+        showBrowse: false,
+        browseOnZoneClick: true,
+        removeLabel: '',
+        removeIcon: '<i class="glyphicon glyphicon-remove"></i>',
+        removeTitle: 'Cancel or reset changes',
+        elErrorContainer: '#kv-avatar-errors-2',
+        msgErrorClass: 'alert alert-block alert-danger',
+        defaultPreviewContent: '<img src="'+avatarImg+'" alt="Your Avatar" width="160"><h6 class="text-muted">Click to select</h6><h6>(Select file < 1500k)</h6>',
+        layoutTemplates: {main2: '{preview} {remove} {browse}'},
+        allowedFileExtensions: ["jpg", "png", "gif"]
+    });
+};
+
 $(document).ready(function () {
     resizeIFrame();
     sidebarClick();
     setActionIcons();
     roleActionsCheckboxRelate();
+    uploadFiles();
 });

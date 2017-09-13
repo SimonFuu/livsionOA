@@ -44,13 +44,20 @@ Route::group(['middleware' => 'auth'], function () {
         Route::group(['prefix' => 'users'], function () {
             Route::get('/list', 'SystemController@usersList');
             Route::get('/add', 'SystemController@setUsers');
+            Route::get('/edit', 'SystemController@setUsers');
             Route::post('/store', 'SystemController@storeUser');
+        });
+        Route::group(['prefix' => 'departments'], function () {
+            Route::get('/list', 'SystemController@departmentsList');
         });
     });
 
     Route::group(['prefix' => 'panel'], function () {
         Route::get('/init/password', 'PanelController@initPassword');
         Route::post('/init/password', 'PanelController@storeInitPassword');
+        Route::get('/user/center', 'PanelController@userCenter');
+        Route::get('/user/edit', 'PanelController@editProfile');
+        Route::post('/user/store', 'PanelController@storeUserProfile');
 
     });
 });

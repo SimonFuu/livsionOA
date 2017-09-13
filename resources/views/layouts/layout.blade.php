@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>AdminLTE 2 | Starter</title>
+    <title>{{ env('APP_NAME') }}</title>
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -18,9 +18,12 @@
         <link rel="stylesheet" href="/assets/plugins/Ionicons/css/ionicons.min.css">
         <link rel="stylesheet" href="/assets/plugins/AdminLte/css/AdminLTE.min.css">
         <link rel="stylesheet" href="/assets/plugins/AdminLte/css/skin-blue.min.css">
+        <link rel="stylesheet" href="/assets/plugins/bootstrap-fileinput-4.4.2/css/fileinput.css" media="all">
         <link rel="stylesheet" href="/assets/css/layouts.css?v={{ date('YmdHi') }}">
         <script src="/assets/plugins/jquery-3.2.1/jquery-3.2.1.min.js"></script>
         <script src="/assets/plugins/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+        <script src="/assets/plugins/bootstrap-fileinput-4.4.2/js/fileinput.js"></script>
+        <script src="/assets/plugins/bootstrap-fileinput-4.4.2/js/plugins/sortable.js"></script>
     @else
         <link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
         <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -28,8 +31,11 @@
         <link href="//cdn.bootcss.com/admin-lte/2.3.11/css/AdminLTE.min.css" rel="stylesheet">
         <link href="//cdn.bootcss.com/admin-lte/2.3.11/css/skins/skin-blue.css" rel="stylesheet">
         <link rel="stylesheet" href="/assets/css/layouts.css?v={{ env('APP_ASSETS_VERSION') }}">
+        <link href="//cdn.bootcss.com/bootstrap-fileinput/4.4.2/css/fileinput.min.css" rel="stylesheet">
         <script src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
         <script src="//cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script src="//cdn.bootcss.com/bootstrap-fileinput/4.4.2/js/fileinput.min.js"></script>
+        <script src="//cdn.bootcss.com/bootstrap-fileinput/4.4.2/js/plugins/sortable.min.js"></script>
     @endif
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
@@ -113,7 +119,6 @@
     </div>
 </div>
 <!-- /.set-actions-modal -->
-
 <!-- /.Modals -->
 
 @if(env('APP_ENV') === 'local')

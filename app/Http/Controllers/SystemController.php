@@ -284,7 +284,7 @@ class SystemController extends Controller
     public function usersList(Request $request)
     {
         $users = DB::table('system_users')
-            -> select('id', 'name', 'gender', 'isAdmin', 'telephone', 'email', 'isDelete')
+            -> select('id', 'name', 'gender', 'isAdmin', 'telephone', 'email', 'isDelete', 'officeTel')
             -> where(function ($query) use ($request) {
                 if ($request -> has('name')) {
                     $this -> searchCondition['name'] = $request -> name;
@@ -313,11 +313,25 @@ class SystemController extends Controller
     {
         $user = null;
         if ($request -> has('id')) {
-//            $userItem = DB::table('system_users')
+            $userItem = DB::table('system_users')
+                -> select('system_users.id', 'system_users.username', 'system_users.name', 'system_users.gender', 'system_users_roles.rid')
+                -> leftJoin('system_users_roles', 'system_users_roles.uid', '=', 'system_users.id')
+                -> where('system_users.id', $request -> id)
+                -> where('system_users.isDelete', 0)
+                -> where('system_users_roles.isDelete', 0)
+                -> get();
+            $user = (object) $user;
+            foreach ($userItem as $key => $item) {
+                if ($key == 0) {
+                    $user -> id = $item -> id;
+                    $user -> username = $item -> username;
+                    $user -> name = $item -> name;
+                    $user -> gender = $item -> gender;
+                }
+                $user -> roles[$key] = $item -> rid;
+            }
 //                -> select('system_users.id', 'system_users.username', 'system_users.name', 'system_users.gender',
 //                    'system_users.telephone', 'system_users.officeTel',
-//                    DB::raw('CONCAT("' . env('APP_FILE_SERVER') . '", lvs_system_users.avatar) as avatar'),
-//                    'system_users.birthday','system_users.birthday');
         }
         $roles = DB::table('system_roles')
             -> select('id', 'roleName')
@@ -361,9 +375,41 @@ class SystemController extends Controller
 
     private function storeNewUser(Request $request)
     {
+        $req = $request -> except(['_token', 'roles', 'password_confirmation', 'username']);
+        if ($request -> has('password') && $request -> password !== '') {
+            $req['password'] = bcrypt($req['password']);
+        } else {
+            unset($req['password']);
+        }
+        $userRoles = [];
+        DB::beginTransaction();
+        try {
+            DB::table('system_users')
+                -> where('id', $request -> id)
+                -> update($req);
+            DB::table('system_users_roles')
+                -> where('id', $request -> id)
+                -> update(['isDelete', 1]);
+            foreach ($request -> roles as $role) {
+                $userRoles[] = [
+                    'uid' => $request -> id,
+                    'rid' => $role
+                ];
+            }
+            DB::table('system_users_roles')
+                -> insert($userRoles);
+            DB::commit();
+            return redirect('/system/users/list') -> with('success', '添加后台角色成功');
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect('/system/users/list') -> with('error', '添加后台失败：' . $e -> getMessage());
+        }
+    }
+
+    private function updateExistUser(Request $request)
+    {
         $req = $request -> except(['_token', 'roles', 'password_confirmation']);
         $req['password'] = bcrypt($req['password']);
-        dd($req);
         $userRoles = [];
         DB::beginTransaction();
         try {
@@ -383,10 +429,5 @@ class SystemController extends Controller
             DB::rollback();
             return redirect('/system/users/list') -> with('error', '添加后台失败：' . $e -> getMessage());
         }
-    }
-
-    private function updateExistUser(Request $request)
-    {
-
     }
 }

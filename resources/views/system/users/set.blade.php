@@ -22,7 +22,7 @@
                     <div class="form-group {{ $errors -> has('username') ? 'has-error' : '' }}">
                         {!! Form::label('username', '用户名:', ['class' => 'col-sm-2 control-label']) !!}
                         <div class="col-sm-10">
-                            {!! Form::text('username', is_null($user) ? null : $user -> username, ['class' => 'form-control', 'placeholder' => '请输入用户名！']) !!}
+                            {!! Form::text('username', is_null($user) ? null : $user -> username, ['class' => 'form-control', 'placeholder' => '请输入用户名！', is_null($user) ? '' : 'readonly']) !!}
                             @if($errors -> has('username'))
                                 <span class="help-block form-help-block">
                                     <strong>{{ $errors -> first('username') }}</strong>
@@ -100,10 +100,11 @@
                                                 <tr>
                                                     <td>
                                                         <label>
+{{--                                                            {{ dd(in_array($role -> id, $user -> roles)) }}--}}
                                                             @if(is_null($user))
                                                                 <input type="checkbox" name="roles[]" value="{{ $role -> id }}">&nbsp;&nbsp;{{ $role -> roleName }}
                                                             @else
-                                                                <input type="checkbox" name="roles[]" value="{{ $role -> id }}" {{ in_array($role -> id, $user -> rid) ? 'checked' : ''}}>&nbsp;&nbsp;{{ $role['roleName'] }}
+                                                                <input type="checkbox" name="roles[]" value="{{ $role -> id }}" {{ in_array($role -> id, $user -> roles) ? 'checked' : ''}}>&nbsp;&nbsp;{{ $role -> roleName }}
                                                             @endif
                                                         </label>
                                                     </td>
