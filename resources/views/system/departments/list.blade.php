@@ -7,7 +7,7 @@
                 <h3 class="box-title">组织结构</h3>
                 <div class="box-tools">
                     <a href="/system/departments/add" class="btn btn-primary btn-sm">添加</a>
-                    <a href="/system/departments/delete" class="btn btn-danger btn-sm">删除</a>
+                    <a href="/system/departments/delete" class="btn btn-danger btn-sm delete-department">删除</a>
                 </div>
             </div>
             <div class="box-body table-responsive no-padding">
@@ -24,41 +24,55 @@
                                 {!! Form::open(['url' => '/system/departments/store', 'method' => 'POST', 'class' => 'form-horizontal departments-submit-form', 'role' => 'form']) !!}
                                 <!-- class include {'form-horizontal'|'form-inline'} -->
                                     <!--- DepartmentName Field --->
-                                    <div class="form-group">
+                                    <div class="form-group {{ $errors -> has('departmentName') ? 'has-error' : '' }}">
                                         {!! Form::label('departmentName', '名称 * ：', ['class' => 'control-label col-md-4']) !!}
                                         <div class="col-md-8">
                                             {!! Form::text('departmentName', null, ['class' => 'form-control', 'placeholder' => '请输入名称']) !!}
+                                            @if($errors -> has('departmentName'))
+                                                <span class="help-block">
+                                                    <strong>{{ $errors -> first('departmentName') }}</strong>
+                                                </span>
+                                            @endif
                                         </div>
                                     </div>
 
                                     <!--- ParentDepartment Field --->
-                                    <div class="form-group">
+                                    <div class="form-group {{ $errors -> has('parentDepartment') ? 'has-error' : '' }}">
                                         {!! Form::label('parentDepartment', '上级部门 * ：', ['class' => 'control-label col-md-4']) !!}
                                         <div class="col-md-8">
                                             <div class="input-group">
-                                                <label for=""></label>
-                                                <input type="text" class="form-control" id="parentDepartmentName" placeholder="请选择上级部门" readonly>
+                                                <label for="parentDepartmentName"></label>
+                                                <input type="text" class="form-control" id="parentDepartmentName" placeholder="请选择上级部门" value="" readonly>
                                                 <div class="input-group-btn">
-                                                    <button class="btn btn-success" type="button" data-toggle="modal" data-target="#selectParentDepartmentModal">选择</button>
+                                                    <button class="btn btn-success selectParentDepartmentButton" type="button" disabled="disabled" data-toggle="modal" data-target="#selectParentDepartmentModal">选择</button>
                                                 </div>
                                                 <input type="hidden" name="parentDepartment" value="">
                                             </div>
+                                            <span class="help-block">
+                                                <strong>{{ $errors -> first('parentDepartment') }}</strong>
+                                            </span>
                                         </div>
                                     </div>
 
-                                    <!--- DisplayWeight Field --->
-                                    <div class="form-group">
-                                        {!! Form::label('displayWeight', '展示权重：', ['class' => 'control-label col-md-4']) !!}
+                                    <!--- weight Field --->
+                                    <div class="form-group {{ $errors -> has('weight') ? 'has-error' : '' }}">
+                                        {!! Form::label('weight', '展示权重：', ['class' => 'control-label col-md-4']) !!}
                                         <div class="col-md-8">
-                                            {!! Form::number('displayWeight', 100, ['class' => 'form-control', 'placeholder' => '请输入0-100的数字，数字越小，展示越靠前']) !!}
+                                            {!! Form::number('weight', 100, ['class' => 'form-control', 'placeholder' => '请输入0-100的数字，数字越小，展示越靠前']) !!}
+                                            <span class="help-block">
+                                                <strong>{{ $errors -> first('weight') }}</strong>
+                                            </span>
                                         </div>
                                     </div>
 
                                     <!--- Description Field --->
-                                    <div class="form-group">
+                                    <div class="form-group {{ $errors -> has('description') ? 'has-error' : '' }}">
                                         {!! Form::label('description', '描述：', ['class' => 'control-label col-md-4']) !!}
                                         <div class="col-md-8">
-                                            {!! Form::textarea('description', null, ['class' => 'form-control', 'placeholder' => '请输入部门描述！']) !!}
+                                            {!! Form::textarea('description', null, ['class' => 'form-control', 'rows' => 5, 'placeholder' => '请输入部门描述！']) !!}
+                                            <span class="help-block">
+                                                <strong>{{ $errors -> first('description') }}</strong>
+                                            </span>
                                         </div>
                                     </div>
 
@@ -89,7 +103,6 @@
                 <div class="modal-body">
                     <div>
                         <ul class="tree-menu">
-                            <li><a href="javascript:;" data-d-id="0"><i class="fa fa-angle-right level0"></i><span class="department-name">根节点</span></a></li>
                             <li>
                                 {!! $departmentsHtml !!}
                             </li>

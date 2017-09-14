@@ -18,7 +18,7 @@ td > label {
 
 @media screen and (max-width:1240px) {
     .error-content > p {
-        text-align: center;
+        /*text-align: center;*/
         font-size: 18px;
     }
 }

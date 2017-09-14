@@ -20,13 +20,38 @@ class Controller extends BaseController
     {
         $tree = [];
         foreach ($data as $value) {
-            if ($value -> $field == $id) {
-                $value -> level = $level;
-                $value -> children = $this -> treeView($data, $field, $value -> id, $level+1);
-                $tree[] = $value;
+            if (is_array($value)) {
+                if ($value[$field] == $id) {
+                    $value['level'] = $level;
+                    $value['children'] = $this -> treeView($data, $field, $value['id'], $level+1);
+                    $tree[] = $value;
+                }
+            } elseif(is_object($value)) {
+                if ($value -> $field == $id) {
+                    $value -> level = $level;
+                    $value -> children = $this -> treeView($data, $field, $value -> id, $level+1);
+                    $tree[] = $value;
+                }
             }
         }
         return $tree;
+    }
+
+
+    protected function treeViewSearch($data = [], $id = 0)
+    {
+        $ids = [];
+        if (!empty($data)) {
+            foreach ($data as $value) {
+                if ($value['parent'] == $id) {
+                    $ids = array_merge($ids, [$value['id']]);
+                    $ids = array_merge($ids, $this -> treeViewSearch($value['children'], $value['id']));
+                } else {
+                    $ids = array_merge($ids, $this -> treeViewSearch($value['children'], $id));
+                }
+            }
+        }
+        return $ids;
     }
 
     public function getRoleActionsInfo($roleId = 0)

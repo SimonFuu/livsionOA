@@ -434,7 +434,7 @@ class SystemController extends Controller
         $dbDepartments = DB::table('system_departments')
             -> select('*')
             -> where('isDelete', 0)
-            -> orderBy('displayWeight', 'ASC')
+            -> orderBy('weight', 'ASC')
             -> get();
         if (count($dbDepartments) > 0) {
             $departments = $this -> treeView($dbDepartments, 'parentDepartment');
@@ -445,7 +445,7 @@ class SystemController extends Controller
         return view('system.departments.list', ['departmentsHtml' => $departmentsHtml]);
     }
 
-    protected function treeViewDepartmentsHtml($data = array(), $level = 1)
+    protected function treeViewDepartmentsHtml($data = array(), $level = 0)
     {
         $html = '<ul class="tree-menu">';
         foreach ($data as $value) {
@@ -465,7 +465,7 @@ class SystemController extends Controller
         if ($request -> ajax()) {
             if ($request -> has('id')) {
                 $department = DB::table('system_departments')
-                    -> select('id', 'departmentName', 'displayWeight', 'parentDepartment', 'description')
+                    -> select('id', 'departmentName', 'weight', 'parentDepartment', 'description')
                     -> where('isDelete', 0)
                     -> where('id', $request -> id)
                     -> first();
@@ -498,22 +498,98 @@ class SystemController extends Controller
             'departmentName' => 'required|max:30|unique:system_departments,departmentName,'
                 . ($request -> has('id') ? $request -> id : 'NULL') . ',id,isDelete,0',
             'parentDepartment' => 'required'
-                . ($request ->parentDepartment == 0 ? '' : '|exist:system_departments,id,isDelete,0'),
-            'displayWeight' => 'required|numeric|min:0|max:100',
+                . ($request ->parentDepartment == 0 ? '' : '|exists:system_departments,id,isDelete,0'),
+            'weight' => 'required|numeric|min:0|max:100',
             'description' => 'nullable|max:255'
         ];
         $message = [
-            'department.required' => '请输入部门名称！',
-            'department.max' => '部门名称不要超过30个字符！',
-            'department.unique' => '该部门名称已存在，请修改！',
+            'departmentName.required' => '请输入部门名称！',
+            'departmentName.max' => '部门名称不要超过30个字符！',
+            'departmentName.unique' => '该部门名称已存在，请修改！',
             'parentDepartment.required' => '请选择上级部门！',
-            'parentDepartment.exist' => '您选择的上级部门不存在，请重新选择！',
-            'displayWeight.required' => '请输入0-100之间的数字作为部门展示权重！',
-            'displayWeight.numeric' => '请输入0-100之间的数字作为部门展示权重！',
-            'displayWeight.min' => '请输入0-100之间的数字作为部门展示权重！',
-            'displayWeight.max' => '请输入0-100之间的数字作为部门展示权重！',
+            'parentDepartment.exists' => '您选择的上级部门不存在，请重新选择！',
+            'weight.required' => '请输入0-100之间的数字作为部门展示权重！',
+            'weight.numeric' => '请输入0-100之间的数字作为部门展示权重！',
+            'weight.min' => '请输入0-100之间的数字作为部门展示权重！',
+            'weight.max' => '请输入0-100之间的数字作为部门展示权重！',
             'description.max' => '部门描述不要超过255个字符！'
         ];
         $this -> validate($request, $rules, $message);
+        if ($request -> has('id')) {
+            return $this -> updateExistDepartment($request);
+        } else {
+            return $this -> storeNewDepartment($request);
+        }
+    }
+
+    private function storeNewDepartment(Request $request)
+    {
+
+    }
+
+    private function updateExistDepartment(Request $request)
+    {
+        if ($request -> id == 1) {
+            return redirect('/system/departments/list') -> with('error', '修改失败，根节点无法修改，请联系管理员！');
+        }
+        $childrenIds = $this -> getChildrenDepartmentsAndSelf($request -> id);
+        if (in_array($request -> parentDepartment, $childrenIds)) {
+            return redirect('/system/departments/list') -> with('error', '修改失败，该部门的下级部门或自己不能作为"上级部门"！');
+        } else {
+            $data = [
+                'departmentName' => $request -> departmentName,
+                'description' => $request -> description,
+                'parentDepartment' => $request -> parentDepartment,
+                'weight' => $request -> weight,
+            ];
+            DB::table('system_departments') -> where('id', $request -> id) -> update($data);
+            return redirect('/system/departments/list') -> with('success', '修改成功！');
+        }
+    }
+
+
+    public function deleteDepartment(Request $request)
+    {
+        if ($request -> has('id')) {
+            if ($request -> id == 1) {
+                return redirect('/system/departments/list') -> with('error', '删除失败，系统根节点无法删除！');
+            }
+            $ids = $this -> getChildrenDepartmentsAndSelf($request -> id);
+            try {
+                DB::table('system_departments') -> whereIn('id', $ids) -> update(['isDelete' => 1]);
+                DB::table('system_users') -> whereIn('departmentId', $ids) -> update(['departmentId' => 1]);
+                return redirect('/system/departments/list') -> with('success', '部门删除成功，部门内原有用户已移至"根节点"下！');
+            } catch (\Exception $e) {
+                return redirect('/system/departments/list') -> with('error', '部门删除失败：' . $e -> getMessage());
+            }
+        } else {
+            return redirect('/system/departments/list') -> with('error', '删除失败，请提供必要参数！');
+        }
+    }
+
+
+    private function getChildrenDepartmentsAndSelf($id = 0)
+    {
+        $dbDepartments = DB::table('system_departments')
+            -> select('*')
+            -> where('isDelete', 0)
+            -> orderBy('weight', 'ASC')
+            -> get();
+        $dps = [];
+        foreach ($dbDepartments as $key => $value) {
+            $dps[] = [
+                'id' => $value -> id,
+                'parent' => $value -> parentDepartment,
+            ];
+        }
+        $departments[] = [
+            'id' => '0',
+            'parent' => '0',
+            'level' => 0,
+            'children' => $this -> treeView($dps, 'parent', 0, 1)
+        ];
+        $childrenIds = $this -> treeViewSearch($departments, $id);
+        $childrenIds[] = $id;
+        return $childrenIds;
     }
 }

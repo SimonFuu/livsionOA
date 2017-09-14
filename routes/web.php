@@ -50,6 +50,8 @@ Route::group(['middleware' => 'auth'], function () {
         Route::group(['prefix' => 'departments'], function () {
             Route::get('/list', 'SystemController@departmentsList');
             Route::get('/get', 'SystemController@getDepartmentInfo');
+            Route::post('/store', 'SystemController@storeDepartment');
+            Route::get('/delete', 'SystemController@deleteDepartment');
         });
     });
 

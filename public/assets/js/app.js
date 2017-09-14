@@ -247,14 +247,29 @@ var departmentsListSelect = function () {
                     if (data.status) {
                         $('#departmentName').val(data.data.departmentName);
                         $('#parentDepartmentName').val(data.data.parentName);
-                        $('#parentDepartment').val(data.data.parentDepartment);
-                        $('#displayWeight').val(data.data.displayWeight);
+                        $('input[name="parentDepartment"]').val(data.data.parentDepartment);
+                        $('#weight').val(data.data.weight);
                         $('#description').val(data.data.description);
-                        $('input[name="id"]').val(data.data.id)
+                        $('input[name="id"]').val(data.data.id);
+                        $('.selectParentDepartmentButton').prop('disabled', false)
+                    } else {
+                        var html = '<div class="alert alert-danger alert-dismissable">';
+                        html += '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
+                        html += data.message + '</div>';
+                        $('.alert-area').html(html)
                     }
                 },
                 error: function (request) {
-                    alert(111);
+                    var message = '请稍后再试！';
+                    if (request.status === 404) {
+                        message = '请求地址不存在，请联系管理员确认！'
+                    } else if(request.status >= 500) {
+                        message = '请求异常，请稍后再试！'
+                    }
+                    var html = '<div class="alert alert-danger alert-dismissable">';
+                    html += '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
+                    html += message + '</div>';
+                    $('.alert-area').html(html);
                 }
             });
         } else {
@@ -264,6 +279,31 @@ var departmentsListSelect = function () {
         }
     });
 };
+
+var deleteDepartment = function () {
+    $('.delete-department').on('click', function () {
+        var li = $('.departments-tree-menu').find('li[class="active"]');
+        if (li.length === 0) {
+            var html = '<div class="alert alert-danger alert-dismissable">';
+            html += '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
+            html += '请选择要删除的部门！</div>';
+            $('.alert-area').html(html);
+            return false;
+        } else {
+            if (confirm('该操作将一同删除该部门的下级部门，请确认！')) {
+                var id = '';
+                li.each(function (index, element) {
+                    id = '?id=' + $(element).children('a').data('d-id');
+                });
+                $(this).attr('href', $(this).attr('href') + id);
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+    });
+};
 $(document).ready(function () {
     resizeIFrame();
     sidebarClick();
@@ -271,4 +311,5 @@ $(document).ready(function () {
     roleActionsCheckboxRelate();
     uploadFiles();
     departmentsListSelect();
+    deleteDepartment();
 });
