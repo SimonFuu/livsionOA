@@ -16,6 +16,19 @@ class Controller extends BaseController
 
     const PER_PAGE_RECORD_COUNT = 10;
 
+    protected function treeView($data = array(), $field = 'level', $id = 0, $level = 0)
+    {
+        $tree = [];
+        foreach ($data as $value) {
+            if ($value -> $field == $id) {
+                $value -> level = $level;
+                $value -> children = $this -> treeView($data, $field, $value -> id, $level+1);
+                $tree[] = $value;
+            }
+        }
+        return $tree;
+    }
+
     public function getRoleActionsInfo($roleId = 0)
     {
         $basePermissions = [

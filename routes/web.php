@@ -22,7 +22,7 @@ Route::post('/login', 'Auth\\LoginController@loginCheck');
 Route::get('/logout', 'Auth\\LoginController@logout');
 
 Route::group(['middleware' => 'auth'], function () {
-    Route::get('/main', 'SystemController@usersList');
+    Route::get('/main', 'IndexController@showMain');
     Route::get('/index', function () {
         return view('layouts.frame');
     });
@@ -49,6 +49,7 @@ Route::group(['middleware' => 'auth'], function () {
         });
         Route::group(['prefix' => 'departments'], function () {
             Route::get('/list', 'SystemController@departmentsList');
+            Route::get('/get', 'SystemController@getDepartmentInfo');
         });
     });
 

@@ -330,8 +330,6 @@ class SystemController extends Controller
                 }
                 $user -> roles[$key] = $item -> rid;
             }
-//                -> select('system_users.id', 'system_users.username', 'system_users.name', 'system_users.gender',
-//                    'system_users.telephone', 'system_users.officeTel',
         }
         $roles = DB::table('system_roles')
             -> select('id', 'roleName')
@@ -373,7 +371,7 @@ class SystemController extends Controller
         }
     }
 
-    private function storeNewUser(Request $request)
+    private function updateExistUser(Request $request)
     {
         $req = $request -> except(['_token', 'roles', 'password_confirmation', 'username']);
         if ($request -> has('password') && $request -> password !== '') {
@@ -399,14 +397,14 @@ class SystemController extends Controller
             DB::table('system_users_roles')
                 -> insert($userRoles);
             DB::commit();
-            return redirect('/system/users/list') -> with('success', '添加后台角色成功');
+            return redirect('/system/users/list') -> with('success', '添加后台用户成功');
         } catch (\Exception $e) {
             DB::rollback();
-            return redirect('/system/users/list') -> with('error', '添加后台失败：' . $e -> getMessage());
+            return redirect('/system/users/list') -> with('error', '添加后台用户失败：' . $e -> getMessage());
         }
     }
 
-    private function updateExistUser(Request $request)
+    private function storeNewUser(Request $request)
     {
         $req = $request -> except(['_token', 'roles', 'password_confirmation']);
         $req['password'] = bcrypt($req['password']);
@@ -424,10 +422,98 @@ class SystemController extends Controller
             DB::table('system_users_roles')
                 -> insert($userRoles);
             DB::commit();
-            return redirect('/system/users/list') -> with('success', '添加后台角色成功');
+            return redirect('/system/users/list') -> with('success', '添加后台用户成功');
         } catch (\Exception $e) {
             DB::rollback();
-            return redirect('/system/users/list') -> with('error', '添加后台失败：' . $e -> getMessage());
+            return redirect('/system/users/list') -> with('error', '添加后台用户失败：' . $e -> getMessage());
         }
+    }
+
+    public function departmentsList()
+    {
+        $dbDepartments = DB::table('system_departments')
+            -> select('*')
+            -> where('isDelete', 0)
+            -> orderBy('displayWeight', 'ASC')
+            -> get();
+        if (count($dbDepartments) > 0) {
+            $departments = $this -> treeView($dbDepartments, 'parentDepartment');
+            $departmentsHtml = $this -> treeViewDepartmentsHtml($departments);
+        } else {
+            $departmentsHtml = '';
+        }
+        return view('system.departments.list', ['departmentsHtml' => $departmentsHtml]);
+    }
+
+    protected function treeViewDepartmentsHtml($data = array(), $level = 1)
+    {
+        $html = '<ul class="tree-menu">';
+        foreach ($data as $value) {
+            $html .= '<li><a href="javascript:;" data-d-id="' . $value -> id . '">';
+            $html .= '<i class="fa fa-angle-right level' . $level . '"></i>';
+            $html .= '<span class="department-name">' . $value -> departmentName . '</span></a></li>';
+            if ($value -> children) {
+                $html .= '<li>' . $this -> treeViewDepartmentsHtml($value -> children, $level+1) . '</li>';
+            }
+        }
+        $html .= '</ul>';
+        return $html;
+    }
+
+    public function getDepartmentInfo(Request $request)
+    {
+        if ($request -> ajax()) {
+            if ($request -> has('id')) {
+                $department = DB::table('system_departments')
+                    -> select('id', 'departmentName', 'displayWeight', 'parentDepartment', 'description')
+                    -> where('isDelete', 0)
+                    -> where('id', $request -> id)
+                    -> first();
+                if ($department) {
+                    if ($department -> parentDepartment == 0) {
+                        $department -> parentName = '根节点';
+                    } else {
+                        $parent = DB::table('system_departments')
+                            -> select('departmentName')
+                            -> where('isDelete', 0)
+                            -> where('id', $department -> parentDepartment)
+                            -> first();
+                        $department -> parentName = $parent ? $parent -> departmentName : 'NAN';
+                    }
+                }
+                $res = ['status' => true, 'message' => '请求成功！', 'data' => $department];
+            } else {
+                $res = ['status' => false, 'message' => '请求异常，缺少关键参数！', 'data' => []];
+            }
+        } else {
+            $res = ['status' => false, 'message' => '请求方式异常！', 'data' => []];
+
+        }
+        return $res;
+    }
+
+    public function storeDepartment(Request $request)
+    {
+        $rules = [
+            'departmentName' => 'required|max:30|unique:system_departments,departmentName,'
+                . ($request -> has('id') ? $request -> id : 'NULL') . ',id,isDelete,0',
+            'parentDepartment' => 'required'
+                . ($request ->parentDepartment == 0 ? '' : '|exist:system_departments,id,isDelete,0'),
+            'displayWeight' => 'required|numeric|min:0|max:100',
+            'description' => 'nullable|max:255'
+        ];
+        $message = [
+            'department.required' => '请输入部门名称！',
+            'department.max' => '部门名称不要超过30个字符！',
+            'department.unique' => '该部门名称已存在，请修改！',
+            'parentDepartment.required' => '请选择上级部门！',
+            'parentDepartment.exist' => '您选择的上级部门不存在，请重新选择！',
+            'displayWeight.required' => '请输入0-100之间的数字作为部门展示权重！',
+            'displayWeight.numeric' => '请输入0-100之间的数字作为部门展示权重！',
+            'displayWeight.min' => '请输入0-100之间的数字作为部门展示权重！',
+            'displayWeight.max' => '请输入0-100之间的数字作为部门展示权重！',
+            'description.max' => '部门描述不要超过255个字符！'
+        ];
+        $this -> validate($request, $rules, $message);
     }
 }

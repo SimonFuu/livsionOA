@@ -210,29 +210,65 @@ var searchIconsArray =  function(str, container) {
 };
 
 var uploadFiles = function () {
-    var avatarImg = $(".kv-avatar").data('avatar');
-    $("#avatar").fileinput({
-        overwriteInitial: true,
-        maxFileSize: 1500,
-        showClose: false,
-        showCaption: false,
-        showBrowse: false,
-        browseOnZoneClick: true,
-        removeLabel: '',
-        removeIcon: '<i class="glyphicon glyphicon-remove"></i>',
-        removeTitle: 'Cancel or reset changes',
-        elErrorContainer: '#kv-avatar-errors-2',
-        msgErrorClass: 'alert alert-block alert-danger',
-        defaultPreviewContent: '<img src="'+avatarImg+'" alt="Your Avatar" width="160"><h6 class="text-muted">Click to select</h6><h6>(Select file < 1500k)</h6>',
-        layoutTemplates: {main2: '{preview} {remove} {browse}'},
-        allowedFileExtensions: ["jpg", "png", "gif"]
-    });
+    var avatarField = $('#avatar');
+    if (avatarField.length > 0) {
+        var avatarImg = $(".kv-avatar").data('avatar');
+        avatarField.fileinput({
+            overwriteInitial: true,
+            maxFileSize: 1500,
+            showClose: false,
+            showCaption: false,
+            showBrowse: false,
+            browseOnZoneClick: true,
+            removeLabel: '',
+            removeIcon: '<i class="glyphicon glyphicon-remove"></i>',
+            removeTitle: 'Cancel or reset changes',
+            elErrorContainer: '#kv-avatar-errors-2',
+            msgErrorClass: 'alert alert-block alert-danger',
+            defaultPreviewContent: '<img src="'+avatarImg+'" alt="Your Avatar" width="160"><h6 class="text-muted">Click to select</h6><h6>(Select file < 1500k)</h6>',
+            layoutTemplates: {main2: '{preview} {remove} {browse}'},
+            allowedFileExtensions: ["jpg", "png", "gif"]
+        });
+    }
 };
 
+var departmentsListSelect = function () {
+    $('.tree-menu > li > a').on('click', function () {
+        $('.tree-menu > li').removeClass('active');
+        $(this).parent('li').addClass('active');
+        if ($(this).parents('.departments-tree-menu').length > 0) {
+            $.ajax({
+                cache: false,
+                type: 'GET',
+                url: '/system/departments/get',
+                async: false,
+                data: {'id': $(this).data('d-id')},
+                success: function (data) {
+                    if (data.status) {
+                        $('#departmentName').val(data.data.departmentName);
+                        $('#parentDepartmentName').val(data.data.parentName);
+                        $('#parentDepartment').val(data.data.parentDepartment);
+                        $('#displayWeight').val(data.data.displayWeight);
+                        $('#description').val(data.data.description);
+                        $('input[name="id"]').val(data.data.id)
+                    }
+                },
+                error: function (request) {
+                    alert(111);
+                }
+            });
+        } else {
+            $('#selectParentDepartmentModal').modal('hide');
+            $('input[name="parentDepartment"]').val($(this).data('d-id'));
+            $('#parentDepartmentName').val($(this).children('.department-name').html());
+        }
+    });
+};
 $(document).ready(function () {
     resizeIFrame();
     sidebarClick();
     setActionIcons();
     roleActionsCheckboxRelate();
     uploadFiles();
+    departmentsListSelect();
 });
