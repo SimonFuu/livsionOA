@@ -55,9 +55,9 @@
             <div class="navbar-custom-menu">
                 <ul class="nav navbar-nav">
                     <!-- Messages: style can be found in dropdown.less-->
-                    <li class="dropdown messages-menu">
+                    <li class="mouse-dropdown messages-menu">
                         <!-- Menu toggle button -->
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        <a href="#" class="">
                             <i class="fa fa-envelope-o"></i>
                             <span class="label label-success">4</span>
                         </a>
@@ -91,9 +91,9 @@
                     <!-- /.messages-menu -->
 
                     <!-- Notifications Menu -->
-                    <li class="dropdown notifications-menu">
+                    <li class="mouse-dropdown notifications-menu">
                         <!-- Menu toggle button -->
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        <a href="#" class="">
                             <i class="fa fa-bell-o"></i>
                             <span class="label label-warning">10</span>
                         </a>
@@ -113,10 +113,11 @@
                             <li class="footer"><a href="#">View all</a></li>
                         </ul>
                     </li>
+
                     <!-- Tasks Menu -->
-                    <li class="dropdown tasks-menu">
+                    <li class="mouse-dropdown tasks-menu">
                         <!-- Menu Toggle Button -->
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        <a href="#" class="">
                             <i class="fa fa-flag-o"></i>
                             <span class="label label-danger">9</span>
                         </a>
@@ -149,10 +150,11 @@
                             </li>
                         </ul>
                     </li>
+
                     <!-- User Account Menu -->
-                    <li class="dropdown user user-menu">
+                    <li class="mouse-dropdown user user-menu">
                         <!-- Menu Toggle Button -->
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        <a href="#" class="user-center">
                             <!-- The user image in the navbar-->
                             <img src="{{ env('APP_FILE_SERVER_URL') . Auth() -> user() -> avatar }}" class="user-image" alt="User Image">
                             <!-- hidden-xs hides the username on small devices so only the image appears. -->
@@ -162,12 +164,10 @@
                             <!-- The user image in the menu -->
                             <li class="user-header">
                                 <img src="{{ env('APP_FILE_SERVER_URL') . Auth() -> user() -> avatar }}" class="img-circle" alt="User Image">
-
                                 <p>
                                     {{ Auth() -> user() -> name }}
                                     <small>加入时间 {{ date("D, d M Y", strtotime(Auth() -> user() -> addTime)) }}</small>
                                     <small>上次登录IP: <strong>{{ Auth() -> user() -> lastLoginIp }}</strong>. 登录次数: <strong>{{ Auth() -> user() -> loginTimes }}</strong></small>
-
                                 </p>
                             </li>
                             <!-- Menu Footer-->
@@ -226,7 +226,8 @@
     </aside>
     <div class="content-wrapper parent-window-content-wapper">
         <div class="content body">
-            <iframe src="main" frameborder="0" name="content-iframe" class="content-iframe"></iframe>
+            {{--<div class="shadow-on-iframe"></div>--}}
+            <iframe src="main" frameborder="0" name="content-iframe" id="myFrame" class="content-iframe"></iframe>
         </div>
     </div>
 

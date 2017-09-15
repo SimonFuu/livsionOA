@@ -11,7 +11,7 @@
         </div>
         <div class="box box-{{ is_null($user) ? 'info' : 'primary' }}">
             <div class="box-header with-border">
-                <h3 class="box-title">{{ is_null($user) ? '添加' : '编辑'}}用户</h3>
+                <h3 class="box-title">{{ is_null($user) ? '添加' : '编辑'}}后台用户</h3>
             </div>
             <!-- /.box-header -->
             <!-- form start -->

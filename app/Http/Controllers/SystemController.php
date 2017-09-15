@@ -7,15 +7,25 @@ use Illuminate\Support\Facades\DB;
 
 class SystemController extends Controller
 {
+    /**
+     * 菜单列表
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function actionsList()
     {
         $actions = DB::table('system_actions')
             -> select('id', 'actionName', 'description', 'urls', 'weight', 'parentId')
             -> where('isDelete', 0)
+            -> orderBy('weight', 'ASC')
             -> paginate(self::PER_PAGE_RECORD_COUNT);
         return view('system.actions.list', ['actions' => $actions]);
     }
 
+    /**
+     * 编辑／添加菜单Form
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function setAction(Request $request)
     {
         $action = null;
@@ -49,6 +59,11 @@ class SystemController extends Controller
         return view('system.actions.set', ['action' => $action, 'pActions' => $pActions, 'icons' => json_encode($icons)]);
     }
 
+    /**
+     * 编辑／添加菜单
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function storeAction(Request $request)
     {
         $rules = [
@@ -85,6 +100,11 @@ class SystemController extends Controller
         }
     }
 
+    /**
+     * 保存添加菜单
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     private function storeNewAction(Request $request)
     {
         $req = $request -> except('_token');
@@ -100,6 +120,11 @@ class SystemController extends Controller
         }
     }
 
+    /**
+     * 保存编辑菜单
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     private function updateExistAction(Request $request)
     {
         $req = $request -> except('_token');
@@ -117,6 +142,11 @@ class SystemController extends Controller
         }
     }
 
+    /**
+     * 删除菜单
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function deleteAction(Request $request)
     {
         if (!$request -> has('id')) {
@@ -139,6 +169,10 @@ class SystemController extends Controller
         }
     }
 
+    /**
+     * 角色列表
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function rolesList()
     {
         $roles = DB::table('system_roles')
@@ -148,6 +182,11 @@ class SystemController extends Controller
         return view('system.roles.list', ['roles' => $roles]);
     }
 
+    /**
+     * 编辑／添加角色Form
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     */
     public function setRole(Request $request)
     {
         $role = null;
@@ -180,6 +219,11 @@ class SystemController extends Controller
         return view('system.roles.set', ['actions' => $actions, 'role' => $role]);
     }
 
+    /**
+     * 编辑／保存角色
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function storeRole(Request $request)
     {
         $rules = [
@@ -205,6 +249,11 @@ class SystemController extends Controller
         }
     }
 
+    /**
+     * 保存添加角色
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     private function storeNewRole(Request $request)
     {
         $req = $request -> except(['_token', 'actions']);
@@ -229,6 +278,11 @@ class SystemController extends Controller
         }
     }
 
+    /**
+     * 保存编辑角色
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     private function updateExistRole(Request $request)
     {
         $req = $request -> except(['_token', 'actions']);
@@ -257,6 +311,11 @@ class SystemController extends Controller
         }
     }
 
+    /**
+     * 删除角色
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function deleteRole(Request $request)
     {
         if (!$request -> has('id')) {
@@ -281,34 +340,54 @@ class SystemController extends Controller
         }
     }
 
+    /**
+     * 用户列表
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function usersList(Request $request)
     {
         $users = DB::table('system_users')
-            -> select('id', 'name', 'gender', 'isAdmin', 'telephone', 'email', 'isDelete', 'officeTel')
+            -> select(
+                'system_users.id',
+                'system_users.name',
+                'system_users.gender',
+                'system_users.telephone',
+                'system_users.email',
+                'system_users.officeTel',
+                'system_departments.departmentName as department',
+                'system_positions.positionName as position'
+
+            )
+            -> leftJoin('system_departments', 'system_departments.id', '=', 'system_users.departmentId')
+            -> leftJoin('system_positions', 'system_positions.id', '=', 'system_users.positionId')
+            -> where('system_departments.isDelete', 0)
+            -> where('system_users.isDelete', 0)
             -> where(function ($query) use ($request) {
                 if ($request -> has('name')) {
                     $this -> searchCondition['name'] = $request -> name;
-                    $query -> where('name', 'like', '%' . $request -> name . '%');
+                    $query -> where('system_users.name', 'like', '%' . $request -> name . '%');
                 }
                 if ($request -> has('telephone')) {
                     $this -> searchCondition['telephone'] = $request -> telephone;
-                    $query -> where('telephone', $request -> telephone);
+                    $query -> where('system_users.telephone', $request -> telephone);
 
                 }
                 if ($request -> has('gender') && $request -> gender >= 0) {
                     $this -> searchCondition['gender'] = $request -> gender;
-                    $query -> where('gender', $request -> gender);
-
-                }
-                if ($request -> has('isAdmin') && $request -> isAdmin >= 0) {
-                    $this -> searchCondition['isAdmin'] = $request -> isAdmin;
-                    $query -> where('isAdmin', $request -> isAdmin);
+                    $query -> where('system_users.gender', $request -> gender);
                 }
             })
+            -> orderBy('system_users.weight', 'ASC')
             -> paginate(self::PER_PAGE_RECORD_COUNT);
         return view('system.users.list', ['users' => $users, 'sCondition' => $this -> searchCondition]);
     }
 
+    /**
+     * 编辑／添加用户Form
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function setUsers(Request $request)
     {
         $user = null;
@@ -338,6 +417,11 @@ class SystemController extends Controller
         return view('system.users.set', ['user' => $user, 'roles' => $roles]);
     }
 
+    /**
+     * 保存编辑／添加用户
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function storeUser(Request $request)
     {
         $rules = [
@@ -371,6 +455,11 @@ class SystemController extends Controller
         }
     }
 
+    /**
+     * 保存编辑用户
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     private function updateExistUser(Request $request)
     {
         $req = $request -> except(['_token', 'roles', 'password_confirmation', 'username']);
@@ -404,6 +493,11 @@ class SystemController extends Controller
         }
     }
 
+    /**
+     * 保存添加用户
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     private function storeNewUser(Request $request)
     {
         $req = $request -> except(['_token', 'roles', 'password_confirmation']);
@@ -429,6 +523,10 @@ class SystemController extends Controller
         }
     }
 
+    /**
+     * 部门列表
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function departmentsList()
     {
         $dbDepartments = DB::table('system_departments')
@@ -445,21 +543,11 @@ class SystemController extends Controller
         return view('system.departments.list', ['departmentsHtml' => $departmentsHtml]);
     }
 
-    protected function treeViewDepartmentsHtml($data = array(), $level = 0)
-    {
-        $html = '<ul class="tree-menu">';
-        foreach ($data as $value) {
-            $html .= '<li><a href="javascript:;" data-d-id="' . $value -> id . '">';
-            $html .= '<i class="fa fa-angle-right level' . $level . '"></i>';
-            $html .= '<span class="department-name">' . $value -> departmentName . '</span></a></li>';
-            if ($value -> children) {
-                $html .= '<li>' . $this -> treeViewDepartmentsHtml($value -> children, $level+1) . '</li>';
-            }
-        }
-        $html .= '</ul>';
-        return $html;
-    }
-
+    /**
+     * 根据ID获取部门信息
+     * @param Request $request
+     * @return array
+     */
     public function getDepartmentInfo(Request $request)
     {
         if ($request -> ajax()) {
@@ -480,8 +568,10 @@ class SystemController extends Controller
                             -> first();
                         $department -> parentName = $parent ? $parent -> departmentName : 'NAN';
                     }
+                    $res = ['status' => true, 'message' => '请求成功！', 'data' => $department];
+                } else {
+                    $res = ['status' => false, 'message' => '该部门不存在或已被删除！', 'data' => []];
                 }
-                $res = ['status' => true, 'message' => '请求成功！', 'data' => $department];
             } else {
                 $res = ['status' => false, 'message' => '请求异常，缺少关键参数！', 'data' => []];
             }
@@ -492,6 +582,31 @@ class SystemController extends Controller
         return $res;
     }
 
+    /**
+     * 添加部门Form
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function setDepartment()
+    {
+        $dbDepartments = DB::table('system_departments')
+            -> select('*')
+            -> where('isDelete', 0)
+            -> orderBy('weight', 'ASC')
+            -> get();
+        if (count($dbDepartments) > 0) {
+            $departments = $this -> treeView($dbDepartments, 'parentDepartment');
+            $departmentsHtml = $this -> treeViewDepartmentsHtml($departments);
+        } else {
+            $departmentsHtml = '';
+        }
+        return view('system.departments.add', ['departmentsHtml' => $departmentsHtml]);
+    }
+
+    /**
+     * 保存添加／编辑部门
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function storeDepartment(Request $request)
     {
         $rules = [
@@ -522,11 +637,52 @@ class SystemController extends Controller
         }
     }
 
-    private function storeNewDepartment(Request $request)
+    /**
+     * 删除部门
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function deleteDepartment(Request $request)
     {
-
+        if ($request -> has('id')) {
+            if ($request -> id == 1) {
+                return redirect('/system/departments/list') -> with('error', '删除失败，系统根节点无法删除！');
+            }
+            $ids = $this -> getChildrenDepartmentsAndSelf($request -> id);
+            try {
+                DB::table('system_departments') -> whereIn('id', $ids) -> update(['isDelete' => 1]);
+                DB::table('system_users') -> whereIn('departmentId', $ids) -> update(['departmentId' => 1]);
+                return redirect('/system/departments/list') -> with('success', '部门删除成功，部门内原有用户已移至"根节点"下！');
+            } catch (\Exception $e) {
+                return redirect('/system/departments/list') -> with('error', '部门删除失败：' . $e -> getMessage());
+            }
+        } else {
+            return redirect('/system/departments/list') -> with('error', '删除失败，请提供必要参数！');
+        }
     }
 
+    /**
+     * 保存添加部门
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    private function storeNewDepartment(Request $request)
+    {
+        $data = [
+            'departmentName' => $request -> departmentName,
+            'description' => $request -> description,
+            'parentDepartment' => $request -> parentDepartment,
+            'weight' => $request -> weight,
+        ];
+        DB::table('system_departments') -> insert($data);
+        return redirect('/system/departments/list') -> with('success', '添加成功！');
+    }
+
+    /**
+     * 保存编辑部门
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     private function updateExistDepartment(Request $request)
     {
         if ($request -> id == 1) {
@@ -547,27 +703,11 @@ class SystemController extends Controller
         }
     }
 
-
-    public function deleteDepartment(Request $request)
-    {
-        if ($request -> has('id')) {
-            if ($request -> id == 1) {
-                return redirect('/system/departments/list') -> with('error', '删除失败，系统根节点无法删除！');
-            }
-            $ids = $this -> getChildrenDepartmentsAndSelf($request -> id);
-            try {
-                DB::table('system_departments') -> whereIn('id', $ids) -> update(['isDelete' => 1]);
-                DB::table('system_users') -> whereIn('departmentId', $ids) -> update(['departmentId' => 1]);
-                return redirect('/system/departments/list') -> with('success', '部门删除成功，部门内原有用户已移至"根节点"下！');
-            } catch (\Exception $e) {
-                return redirect('/system/departments/list') -> with('error', '部门删除失败：' . $e -> getMessage());
-            }
-        } else {
-            return redirect('/system/departments/list') -> with('error', '删除失败，请提供必要参数！');
-        }
-    }
-
-
+    /**
+     * 获取所有下级部门及本身
+     * @param int $id
+     * @return array
+     */
     private function getChildrenDepartmentsAndSelf($id = 0)
     {
         $dbDepartments = DB::table('system_departments')
@@ -591,5 +731,150 @@ class SystemController extends Controller
         $childrenIds = $this -> treeViewSearch($departments, $id);
         $childrenIds[] = $id;
         return $childrenIds;
+    }
+
+    /**
+     * 生成部门Tree 的Html
+     * @param array $data
+     * @param int $level
+     * @return string
+     */
+    private function treeViewDepartmentsHtml($data = array(), $level = 0)
+    {
+        $html = '<ul class="tree-menu">';
+        foreach ($data as $value) {
+            $html .= '<li><a href="javascript:;" data-d-id="' . $value -> id . '">';
+            $html .= '<i class="fa fa-angle-right level' . $level . '"></i>';
+            $html .= '<span class="department-name">' . $value -> departmentName . '</span></a></li>';
+            if ($value -> children) {
+                $html .= '<li>' . $this -> treeViewDepartmentsHtml($value -> children, $level+1) . '</li>';
+            }
+        }
+        $html .= '</ul>';
+        return $html;
+    }
+
+    public function positionsList()
+    {
+        $dbPositions = DB::table('system_positions')
+            -> select('id', 'positionName', 'weight', 'status', 'description')
+            -> where('isDelete', 0)
+            -> orderBy('weight', 'ASC')
+            -> get();
+        return view('system.positions.list', ['positions' => $dbPositions]);
+    }
+
+    public function getPositionInfo(Request $request)
+    {
+        if ($request -> ajax()) {
+            if ($request -> has('id')) {
+                $position = DB::table('system_positions')
+                    -> select('id', 'positionName', 'weight', 'status', 'description')
+                    -> where('isDelete', 0)
+                    -> where('id', $request -> id)
+                    -> first();
+                if ($position) {
+                    $res = ['status' => true, 'message' => '请求成功！', 'data' => $position];
+                } else {
+                    $res = ['status' => false, 'message' => '请求成功！', 'data' => []];
+                }
+            } else {
+                $res = ['status' => false, 'message' => '请求异常，缺少关键参数！', 'data' => []];
+            }
+        } else {
+            $res = ['status' => false, 'message' => '请求方式异常！', 'data' => []];
+
+        }
+        return $res;
+    }
+
+    public function setPosition()
+    {
+        return view('system.positions.add');
+    }
+
+    public function storePosition(Request $request)
+    {
+        $rules = [
+            'positionName' => 'required|max:30|unique:system_positions,positionName,'
+                . ($request -> has('id') ? $request -> id : 'NULL') . ',id,isDelete,0',
+            'status' => 'required|boolean',
+            'weight' => 'required|numeric|min:0|max:100',
+            'description' => 'nullable|max:255'
+        ];
+        $message = [
+            'positionName.required' => '请输入职位名称！',
+            'positionName.max' => '职位名称不要超过30个字符！',
+            'positionName.unique' => '该职位名称已存在，请修改！',
+            'status.required' => '请选择职位状态！',
+            'status.boolean' => '职位状态不正确，请重试！',
+            'weight.required' => '请输入0-100之间的数字作为职位展示权重！',
+            'weight.numeric' => '请输入0-100之间的数字作为职位展示权重！',
+            'weight.min' => '请输入0-100之间的数字作为职位展示权重！',
+            'weight.max' => '请输入0-100之间的数字作为职位展示权重！',
+            'description.max' => '职位描述不要超过255个字符！'
+        ];
+        $this -> validate($request, $rules, $message);
+        if ($request -> has('id')) {
+            return $this -> updateExistPosition($request);
+        } else {
+            return $this -> storeNewPosition($request);
+        }
+    }
+
+
+    public function deletePosition(Request $request)
+    {
+        if ($request -> has('id')) {
+            if ($request -> id == 1) {
+                return redirect('/system/positions/list') -> with('error', '删除失败，系统保留职位无法删除！');
+            }
+            try {
+                DB::table('system_positions') -> where('id', $request -> id) -> update(['isDelete' => 1, 'status' => 0]);
+                DB::table('system_users') -> where('positionId', $request -> id) -> update(['positionId' => 1]);
+                return redirect('/system/positions/list') -> with('success', '职位删除成功，职位原有用户已移至"default"下！');
+            } catch (\Exception $e) {
+                return redirect('/system/positions/list') -> with('error', '职位删除失败：' . $e -> getMessage());
+            }
+        } else {
+            return redirect('/system/positions/list') -> with('error', '删除失败，请提供必要参数！');
+        }
+    }
+
+    private function updateExistPosition(Request $request)
+    {
+        if ($request -> id == 1) {
+            return redirect('/system/positions/list') -> with('error', '系统保留职位，请勿删除！');
+        }
+
+        try {
+            if ($request -> status == 0) {
+                DB::table('system_users') -> where('positionId', $request -> id) -> update(['positionId' => 1]);
+            }
+
+            DB::table('system_positions')
+                -> where('id', $request -> id) -> update([
+                    'positionName' => $request -> positionName,
+                    'weight' => $request -> weight,
+                    'status' => $request -> status,
+                    'description' => $request -> description,
+                ]);
+            return redirect('/system/positions/list') -> with('success', '编辑成功！');
+        } catch (\Exception $e) {
+            return redirect('/system/positions/list') -> with('error', '编辑失败：' . $e -> getMessage());
+        }
+
+    }
+
+    private function storeNewPosition(Request $request)
+    {
+        $data = [
+            'positionName' => $request -> positionName,
+            'description' => $request -> description,
+            'status' => $request -> status,
+            'weight' => $request -> weight,
+        ];
+        DB::table('system_positions') -> insert($data);
+        return redirect('/system/positions/list') -> with('success', '添加成功！');
     }
 }

@@ -11,8 +11,7 @@
         </div>
         <div class="box">
             <div class="box-header">
-                <h3 class="box-title">用户列表</h3>
-
+                <h3 class="box-title">后台用户列表</h3>
                 <div class="box-tools">
                     <a href="/system/users/add" class="btn btn-primary btn-sm">添加</a>
                 </div>
@@ -44,12 +43,14 @@
                 <table class="table table-hover actions-list">
                     <thead>
                         <tr>
-                            <th width="50">ID</th>
+                            <th width="20">ID</th>
                             <th width="100">姓名</th>
                             <th width="50">性别</th>
                             <th width="100">电话</th>
                             <th width="100">办公电话</th>
-                            <th width="200">邮箱</th>
+                            <th width="100">邮箱</th>
+                            <th width="100">部门</th>
+                            <th width="100">职位</th>
                             <th width="50">操作</th>
                         </tr>
                     </thead>
@@ -59,9 +60,11 @@
                                 <td>{{ $user -> id }}</td>
                                 <td>{{ $user -> name }}</td>
                                 <td>{{ $user -> gender == 0 ? '男' : '女' }}</td>
-                                <td>{{ $user -> telephone }}</td>
-                                <td>{{ $user -> officeTel }}</td>
-                                <td>{{ $user -> email }}</td>
+                                <td>{{ $user -> telephone ? $user -> telephone : '空' }}</td>
+                                <td>{{ $user -> officeTel ? $user -> officeTel : '空' }}</td>
+                                <td>{{ $user -> email ? $user -> email : '空' }}</td>
+                                <td>{{ $user -> department }}</td>
+                                <td>{{ $user -> position }}</td>
                                 <td>
                                     <a href="/system/users/edit?id={{ $user -> id }}"><i class="fa fa-pencil-square-o"></i></a>
                                     &nbsp;

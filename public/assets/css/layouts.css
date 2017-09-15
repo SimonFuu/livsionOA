@@ -93,9 +93,14 @@ td > label {
     line-height: 34px;
 }
 
+.shadow-on-iframe {
+    width: 100%;
+    position: absolute;
+}
+
 .user-profile-table > tbody > tr > td, .user-profile-table > tbody > tr > th{
-    height: 75px;
-    line-height: 75px;
+    height: 30px;
+    line-height: 30px;
 }
 
 .user-profile-avatar {
@@ -286,3 +291,38 @@ td > label {
     margin-left: 0;
 }
 
+/**
+    职位管理
+ */
+.positions {
+    margin-top: 30px;
+    margin-bottom: 30px;
+    padding: 10px;
+}
+
+.positions-form {
+    border-radius: 5px;
+    background: rgb(242, 242, 242);
+    border: 2px solid rgb(220, 220, 220);
+}
+
+.positions-list, .positions-list > thead > tr > th , .positions-list-body > tr > td {
+    border-color: #ddd !important;
+}
+
+.positions-list > thead > tr > th {
+    background-color: rgb(242, 242, 242);
+}
+
+.positions-list-body > tr {
+    cursor: pointer;
+}
+
+.positions-list-body > tr.active {
+    background-color: rgb(242, 242, 242);
+}
+
+.positions-submit-form > .form-group {
+    margin-right: 0;
+    margin-left: 0;
+}

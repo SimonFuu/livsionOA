@@ -20,7 +20,6 @@ Route::get('notify', function () {
 Route::get('/login', 'Auth\\LoginController@showLoginForm');
 Route::post('/login', 'Auth\\LoginController@loginCheck');
 Route::get('/logout', 'Auth\\LoginController@logout');
-
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/main', 'IndexController@showMain');
     Route::get('/index', function () {
@@ -50,11 +49,18 @@ Route::group(['middleware' => 'auth'], function () {
         Route::group(['prefix' => 'departments'], function () {
             Route::get('/list', 'SystemController@departmentsList');
             Route::get('/get', 'SystemController@getDepartmentInfo');
+            Route::get('/add', 'SystemController@setDepartment');
             Route::post('/store', 'SystemController@storeDepartment');
             Route::get('/delete', 'SystemController@deleteDepartment');
         });
+        Route::group(['prefix' => 'positions'], function () {
+            Route::get('/list', 'SystemController@positionsList');
+            Route::get('/get', 'SystemController@getPositionInfo');
+            Route::get('/add', 'SystemController@setPosition');
+            Route::post('/store', 'SystemController@storePosition');
+            Route::get('/delete', 'SystemController@deletePosition');
+        });
     });
-
     Route::group(['prefix' => 'panel'], function () {
         Route::get('/init/password', 'PanelController@initPassword');
         Route::post('/init/password', 'PanelController@storeInitPassword');

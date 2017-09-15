@@ -36,9 +36,22 @@ class PanelController extends Controller
     public function userCenter()
     {
         $userInfo = DB::table('system_users')
-            -> select('id', 'username', 'name', 'gender', 'email', 'telephone', 'avatar', 'officeTel')
-            -> where('isDelete', 0)
-            -> where('id', Auth::user() -> id)
+            -> select(
+                'system_users.id',
+                'system_users.username',
+                'system_users.name',
+                'system_users.gender',
+                'system_users.email',
+                'system_users.telephone',
+                'system_users.avatar',
+                'system_users.officeTel',
+                'system_departments.departmentName as department',
+                'system_positions.positionName as position'
+            )
+            -> leftJoin('system_departments', 'system_departments.id', '=', 'system_users.departmentId')
+            -> leftJoin('system_positions', 'system_positions.id', '=', 'system_users.positionId')
+            -> where('system_users.isDelete', 0)
+            -> where('system_users.id', Auth::user() -> id)
             -> first();
         return view('panel.user', ['userProfile' => $userInfo]);
     }
@@ -98,7 +111,6 @@ class PanelController extends Controller
         if ($avatar) {
             $req['avatar'] = $avatar;
         }
-
         DB::table('system_users') -> where('id', Auth::user() -> id) -> update($req);
         return redirect('/panel/user/center?id=' . Auth::user() -> id) -> with('success', '修改信息成功，请刷新页面获取新的头像');
     }

@@ -6,9 +6,21 @@ var resizeIFrame = function () {
     var contentWapper = $('.parent-window-content-wapper');
     var height = contentWapper.height();
     contentWapper.children('.content').children('iframe').css('height', height - 5);
+    $('.shadow-on-iframe').css('height', height - 5);
     $(window).resize(function () {
         height = contentWapper.height();
         contentWapper.children('.content').children('iframe').css('height', height - 5);
+        $('.shadow-on-iframe').css('height', height - 5);
+    });
+};
+
+var showDropDownMenus = function () {
+    var menu = $('.mouse-dropdown');
+    menu.on('mouseover', function () {
+        $(this).addClass('open')
+    });
+    menu.on('mouseout', function () {
+        $(this).removeClass('open')
     });
 };
 
@@ -301,15 +313,82 @@ var deleteDepartment = function () {
                 return false;
             }
         }
-
     });
 };
+
+var selectPositions = function () {
+    $('.positions-list-body > tr').on('click', function () {
+        $('.positions-list-body').children('tr').removeClass('active');
+        $.ajax({
+            cache: false,
+            type: 'GET',
+            url: '/system/positions/get',
+            async: false,
+            data: {'id': $(this).data('p-id')},
+            success: function (data) {
+                if (data.status) {
+                    $('.ed-positionName').val(data.data.positionName);
+                    $('.ed-weight').val(data.data.weight);
+                    $('.ed-status').val(data.data.status);
+                    $('.ed-description').val(data.data.description);
+                    $('.ed-id').val(data.data.id);
+                } else {
+                    var html = '<div class="alert alert-danger alert-dismissable">';
+                    html += '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
+                    html += data.message + '</div>';
+                    $('.alert-area').html(html)
+                }
+            },
+            error: function (request) {
+                var message = '请稍后再试！';
+                if (request.status === 404) {
+                    message = '请求地址不存在，请联系管理员确认！'
+                } else if(request.status >= 500) {
+                    message = '请求异常，请稍后再试！'
+                }
+                var html = '<div class="alert alert-danger alert-dismissable">';
+                html += '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
+                html += message + '</div>';
+                $('.alert-area').html(html);
+            }
+        });
+        $(this).addClass('active');
+    });
+};
+
+var deletePosition = function () {
+    $('.delete-position').on('click', function () {
+        var tr = $('.positions-list-body').find('tr[class="active"]');
+        if (tr.length === 0) {
+            var html = '<div class="alert alert-danger alert-dismissable">';
+            html += '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
+            html += '请选择要删除的职位！</div>';
+            $('.alert-area').html(html);
+            return false;
+        } else {
+            if (confirm('您是否要删除该职位？')) {
+                var id = '';
+                tr.each(function (index, element) {
+                    id = '?id=' + $(element).data('p-id');
+                });
+                $(this).attr('href', $(this).attr('href') + id);
+                return true;
+            } else {
+                return false;
+            }
+        }
+    });
+};
+
 $(document).ready(function () {
     resizeIFrame();
+    showDropDownMenus();
     sidebarClick();
     setActionIcons();
     roleActionsCheckboxRelate();
     uploadFiles();
     departmentsListSelect();
     deleteDepartment();
+    selectPositions();
+    deletePosition();
 });

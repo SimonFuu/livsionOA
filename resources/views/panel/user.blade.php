@@ -2,7 +2,7 @@
 @section('body')
     <!-- Main content -->
     <section class="content">
-        <div class="box box-info">
+        <div class="box">
             <div class="box-header with-border">
                 <h3 class="box-title">个人中心</h3>
                 <div class="box-tools">
@@ -18,7 +18,7 @@
                             <td class="text-center" width="200">
                                 {{ $userProfile -> username }}
                             </td>
-                            <td rowspan="3">
+                            <td rowspan="8">
                                 <div class="user-profile-avatar">
                                     <img src="{{ env('APP_FILE_SERVER_URL') . $userProfile -> avatar}}" alt="头像" width="160" height="160">
                                 </div>
@@ -53,6 +53,22 @@
                             <td class="text-center">
                                 <span class="user-profile-filed">
                                     {{ is_null($userProfile -> officeTel) ? '空'  : $userProfile -> officeTel}}
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="text-center">部门：</th>
+                            <td class="text-center">
+                                <span class="user-profile-filed">
+                                    {{ $userProfile -> department }}
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="text-center">职位：</th>
+                            <td class="text-center">
+                                <span class="user-profile-filed">
+                                    {{ $userProfile -> position }}
                                 </span>
                             </td>
                         </tr>
