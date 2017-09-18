@@ -14,7 +14,7 @@
                 <table class="table user-profile-table">
                     <tbody>
                         <tr>
-                            <th class="text-center" width="250">用户名：</th>
+                            <th class="text-center" width="250">工号：</th>
                             <td class="text-center" width="200">
                                 {{ $userProfile -> username }}
                             </td>

@@ -31,7 +31,7 @@ class SystemController extends Controller
         $action = null;
         if ($request -> has('id')) {
             $a = DB::table('system_actions')
-                -> select('id', 'actionName', 'menuUrl', 'urls', 'weight', 'parentId', 'description')
+                -> select('id', 'actionName', 'menuUrl', 'urls', 'weight', 'parentId', 'description', 'icon', 'adminOnly')
                 -> where('isDelete', 0)
                 -> where('id', $request -> id)
                 -> first();
@@ -73,7 +73,8 @@ class SystemController extends Controller
             'description' => 'required|max:255',
             'urls' => 'required|max:1000',
             'weight' => 'required|numeric|min:1|max:10000',
-            'icon' => 'required|exists:system_icons,icon'
+            'icon' => 'required|exists:system_icons,icon',
+            'adminOnly' => 'required|boolean'
         ];
         $message = [
             'actionName.required' => '请输入权限名称！',
@@ -90,7 +91,9 @@ class SystemController extends Controller
             'weight.min' => '菜单展示权重格式不正确，请输入1-10000的数字！',
             'weight.max' => '菜单展示权重格式不正确，请输入1-10000的数字！',
             'icon.required' => '请选择菜单图标！',
-            'icon.exists' => '请选择系统提供的图标！'
+            'icon.exists' => '请选择系统提供的图标！',
+            'adminOnly.required' => '请选择是否是后台菜单！',
+            'adminOnly.boolean' => '后台菜单标识不正确，请重新选择！'
         ];
         $this -> validate($request, $rules, $message);
         if ($request -> has('id')) {
@@ -350,20 +353,26 @@ class SystemController extends Controller
         $users = DB::table('system_users')
             -> select(
                 'system_users.id',
+                'system_users.username',
                 'system_users.name',
                 'system_users.gender',
                 'system_users.telephone',
                 'system_users.email',
                 'system_users.officeTel',
                 'system_departments.departmentName as department',
-                'system_positions.positionName as position'
-
+                'system_positions.positionName as position',
+                'system_users.status',
+                'system_users.isAdmin'
             )
             -> leftJoin('system_departments', 'system_departments.id', '=', 'system_users.departmentId')
             -> leftJoin('system_positions', 'system_positions.id', '=', 'system_users.positionId')
             -> where('system_departments.isDelete', 0)
             -> where('system_users.isDelete', 0)
             -> where(function ($query) use ($request) {
+                if ($request -> has('username')) {
+                    $this -> searchCondition['username'] = $request -> username;
+                    $query -> where('system_users.username', $request -> username);
+                }
                 if ($request -> has('name')) {
                     $this -> searchCondition['name'] = $request -> name;
                     $query -> where('system_users.name', 'like', '%' . $request -> name . '%');
@@ -371,11 +380,15 @@ class SystemController extends Controller
                 if ($request -> has('telephone')) {
                     $this -> searchCondition['telephone'] = $request -> telephone;
                     $query -> where('system_users.telephone', $request -> telephone);
-
                 }
                 if ($request -> has('gender') && $request -> gender >= 0) {
                     $this -> searchCondition['gender'] = $request -> gender;
                     $query -> where('system_users.gender', $request -> gender);
+                }
+
+                if ($request -> has('isAdmin') && $request -> isAdmin >= 0) {
+                    $this -> searchCondition['isAdmin'] = $request -> isAdmin;
+                    $query -> where('system_users.isAdmin', $request -> isAdmin);
                 }
             })
             -> orderBy('system_users.weight', 'ASC')
@@ -393,8 +406,23 @@ class SystemController extends Controller
         $user = null;
         if ($request -> has('id')) {
             $userItem = DB::table('system_users')
-                -> select('system_users.id', 'system_users.username', 'system_users.name', 'system_users.gender', 'system_users_roles.rid')
+                -> select(
+                    'system_users.id',
+                    'system_users.username',
+                    'system_users.name',
+                    'system_users.gender',
+                    'system_users.isAdmin',
+                    'system_users.status',
+                    'system_users.telephone',
+                    'system_users.departmentId',
+                    'system_users.positionId',
+                    'system_users.officeTel',
+                    'system_users.email',
+                    'system_departments.departmentName',
+                    'system_users_roles.rid'
+                )
                 -> leftJoin('system_users_roles', 'system_users_roles.uid', '=', 'system_users.id')
+                -> leftJoin('system_departments', 'system_departments.id', '=', 'system_users.departmentId')
                 -> where('system_users.id', $request -> id)
                 -> where('system_users.isDelete', 0)
                 -> where('system_users_roles.isDelete', 0)
@@ -406,6 +434,14 @@ class SystemController extends Controller
                     $user -> username = $item -> username;
                     $user -> name = $item -> name;
                     $user -> gender = $item -> gender;
+                    $user -> isAdmin = $item -> isAdmin;
+                    $user -> telephone = $item -> telephone;
+                    $user -> officeTel = $item -> officeTel;
+                    $user -> email = $item -> email;
+                    $user -> status = $item -> status;
+                    $user -> departmentId = $item -> departmentId;
+                    $user -> positionId = $item -> positionId;
+                    $user -> departmentName = $item -> departmentName;
                 }
                 $user -> roles[$key] = $item -> rid;
             }
@@ -414,7 +450,30 @@ class SystemController extends Controller
             -> select('id', 'roleName')
             -> where('isDelete', 0)
             -> get();
-        return view('system.users.set', ['user' => $user, 'roles' => $roles]);
+        $dbDepartments = DB::table('system_departments')
+            -> select('*')
+            -> where('isDelete', 0)
+            -> orderBy('weight', 'ASC')
+            -> get();
+        if (count($dbDepartments) > 0) {
+            $departments = $this -> treeView($dbDepartments, 'parentDepartment');
+            $departmentsHtml = $this -> treeViewDepartmentsHtml($departments);
+        } else {
+            $departmentsHtml = '';
+        }
+        $dbPositions = DB::table('system_positions')
+            -> select('id', 'positionName')
+            -> where('isDelete', 0)
+            -> orderBy('weight', 'ASC')
+            -> get();
+        $positions = [];
+        if (count($dbPositions) > 0) {
+            foreach ($dbPositions as $item) {
+                $positions[$item -> id] = $item -> positionName;
+            }
+        }
+        return view('system.users.set',
+            ['user' => $user, 'roles' => $roles, 'departmentsHtml' => $departmentsHtml, 'positions' => $positions]);
     }
 
     /**
@@ -427,24 +486,46 @@ class SystemController extends Controller
         $rules = [
             'username' => 'required|max:30|unique:system_users,username,'
                 . ($request -> has('id') ? $request -> id : 'NULL') . ',id,isDelete,0',
-            'password' => 'required_without:id|max:255|min:6|confirmed',
+            'password' => ($request -> has('id') ? 'nullable|' : 'required|') . 'max:255|min:6|confirmed',
             'name' => 'required|max:30',
+            'telephone' => 'required|max:16|min:11|unique:system_users,telephone,'
+                . ($request -> has('id') ? $request -> id : 'NULL') . ',id,isDelete,0',
+            'departmentId' => 'required|exists:system_departments,id,isDelete,0',
+            'positionId' => 'required|exists:system_positions,id,status,1',
+            'officeTel' => 'nullable|max:16',
+            'email' => 'nullable|email|max:64|unique:system_users,email,'
+                . ($request -> has('id') ? $request -> id : 'NULL') . ',id,isDelete,0',
             'gender' => 'required|boolean',
-            'roles' => 'required|array'
+            'isAdmin' => 'required|boolean',
+            'roles' => 'required_if:isAdmin,1|array'
         ];
         $message = [
             'username.required' => '请输入用户名！',
             'username.max' => '用户名长度最大为30！',
             'username.unique' => '该用户名已经存在，请重新输入！',
-            'password.required_without' => '请输入密码！',
+            'password.required' => '请输入密码！',
             'password.max' => '密码长度最大为255！',
             'password.min' => '密码长度最短为6',
             'password.confirmed' => '两次输入的密码不一致，请重新输入！',
             'name.required' => '请输入姓名！',
             'name.max' => '姓名长度最大为30！',
-            'gender.max' => '请选择用户性别！',
+            'telephone.required' => '请输入手机号！',
+            'telephone.unique' => '该手机号已存在，请重新输入！！',
+            'telephone.min' => '手机号长度最低为11位！',
+            'telephone.max' => '手机号长度最高位16位！',
+            'departmentId.required' => '请选择用户所属部门！',
+            'departmentId.exists' => '您选择的部门不存在或已被删除，请重试！',
+            'positionId.required' => '请选择用户职位！',
+            'positionId.exists' => '您选择的职位不存在或已被删除，请重试！',
+            'officeTel.max' => '办公电话长度最大为16位！',
+            'email.email' => '请输入合法的电子邮箱地址！',
+            'email.unique' => '该电子邮箱已存在，请重新输入！',
+            'email.max' => '电子邮箱长度，最长为64位！',
+            'gender.required' => '请选择用户性别！',
             'gender.boolean' => '性别格式不正确！',
-            'roles.required' => '请选择用户角色！',
+            'isAdmin.required' => '请选择是否是管理员！',
+            'isAdmin.boolean' => '管理员标识格式不正确！',
+            'roles.required_if' => '请选择用户角色！',
             'roles.array' => '用户角色格式不正确，请联系管理员！',
         ];
         $this -> validate($request, $rules, $message);
@@ -476,12 +557,19 @@ class SystemController extends Controller
                 -> update($req);
             DB::table('system_users_roles')
                 -> where('id', $request -> id)
-                -> update(['isDelete', 1]);
-            foreach ($request -> roles as $role) {
+                -> update(['isDelete' => 1]);
+            if ($request -> isAdmin == 0) {
                 $userRoles[] = [
                     'uid' => $request -> id,
-                    'rid' => $role
+                    'rid' => 1
                 ];
+            } else {
+                foreach ($request -> roles as $role) {
+                    $userRoles[] = [
+                        'uid' => $request -> id,
+                        'rid' => $role
+                    ];
+                }
             }
             DB::table('system_users_roles')
                 -> insert($userRoles);
@@ -507,11 +595,18 @@ class SystemController extends Controller
         try {
             $uid = DB::table('system_users')
                 -> insertGetId($req);
-            foreach ($request -> roles as $role) {
+            if ($request -> isAdmin == 0) {
                 $userRoles[] = [
                     'uid' => $uid,
-                    'rid' => $role
+                    'rid' => 1
                 ];
+            } else {
+                foreach ($request -> roles as $role) {
+                    $userRoles[] = [
+                        'uid' => $uid,
+                        'rid' => $role
+                    ];
+                }
             }
             DB::table('system_users_roles')
                 -> insert($userRoles);

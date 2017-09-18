@@ -56,20 +56,24 @@ class LoginController extends Controller
 
     public function loginCheck(Request $request)
     {
-        if (Auth::attempt(['username' => $request -> username, 'password' => $request -> password])) {
-            if (Auth::user() -> isActive == 0) {
-                return redirect('/panel/init/password');
+        if (Auth::attempt(['username' => $request -> username, 'password' => $request -> password, 'isDelete' => 0])) {
+            if (Auth::user() -> status == 0) {
+                Auth::logout();
+                return redirect('/login') -> with('error', '该用户已被禁用，请联系管理员！');
             }
             $userRolesId = [];
             $userRolesItems = DB::table('system_users_roles')
                 -> select('rid') -> where('isDelete', 0) -> where('uid', Auth::user() -> id) -> get();
-            if (count($userRolesItems) !== 0) {
+            if (count($userRolesItems) > 0) {
                 foreach ($userRolesItems as $item) {
                     $userRolesId[] = $item -> rid;
                 }
-                $roles = $this -> getRoleActionsInfo($userRolesId);
+                $roles = $this -> getRoleActionsInfo($userRolesId, Auth::user() -> isAdmin);
                 Session::put('menus', $roles['menus']);
                 Session::put('permissions', $roles['permissions']);
+                if (Auth::user() -> isActive == 0) {
+                    return redirect('/panel/init/password');
+                }
                 DB::table('system_users')
                     -> where('id', Auth::user() -> id)
                     -> increment('loginTimes', 1, ['lastLoginIp' => $request -> ip()]);

@@ -184,6 +184,10 @@ td > label {
     color: #333 !important;
 }
 
+.departments-list-on-modal {
+    max-height: 450px;
+    overflow: auto;
+}
 .actions-list-urls {
     max-height: 100px;
     overflow: auto;
@@ -326,3 +330,29 @@ td > label {
     margin-right: 0;
     margin-left: 0;
 }
+
+/**
+    用户管理
+ */
+@media screen and (max-width: 768px){
+    .user-form-group {
+        margin-bottom: 15px;
+    }
+
+    .user-bottom-form-group {
+        margin-bottom: 0;
+    }
+}
+
+.user-form-group.has-error label {
+    color: #dd4b39;
+}
+
+.user-form-group.has-error .help-block {
+    color: #dd4b39;
+}
+
+.user-form-group.has-error .form-control, .user-form-group.has-error .input-group-addon {
+     border-color: #dd4b39;
+     box-shadow: none;
+ }

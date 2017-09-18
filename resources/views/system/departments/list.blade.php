@@ -101,7 +101,7 @@
                     <h4 class="modal-title" id="selectParentDepartmentModalLabel">请选择上级部门</h4>
                 </div>
                 <div class="modal-body">
-                    <div>
+                    <div class="departments-list-on-modal">
                         <ul class="tree-menu">
                             <li>
                                 {!! $departmentsHtml !!}

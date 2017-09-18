@@ -285,9 +285,19 @@ var departmentsListSelect = function () {
                 }
             });
         } else {
-            $('#selectParentDepartmentModal').modal('hide');
-            $('input[name="parentDepartment"]').val($(this).data('d-id'));
-            $('#parentDepartmentName').val($(this).children('.department-name').html());
+            var selectParentDepartmentModal = $('#selectParentDepartmentModal');
+            if(selectParentDepartmentModal.length > 0) {
+                selectParentDepartmentModal.modal('hide');
+                $('input[name="parentDepartment"]').val($(this).data('d-id'));
+                $('#parentDepartmentName').val($(this).children('.department-name').html());
+                return true;
+            }
+            var selectUserDepartmentModal = $('#selectUserDepartmentModal');
+            if (selectUserDepartmentModal.length > 0) {
+                selectUserDepartmentModal.modal('hide');
+                $('input[name="departmentId"]').val($(this).data('d-id'));
+                $('#departmentName').val($(this).children('.department-name').html());
+            }
         }
     });
 };
@@ -380,6 +390,28 @@ var deletePosition = function () {
     });
 };
 
+var isAdminChange = function () {
+    var isAdmin = $('input[name="isAdmin"]:checked');
+    if (isAdmin.length > 0) {
+        if (isAdmin.val() === '1') {
+            $('.admin-roles').removeClass('hidden');
+            $('input[name="roles[]"]').prop('disabled', false)
+        } else {
+            $('.admin-roles').addClass('hidden');
+            $('input[name="roles[]"]').prop('disabled', true)
+        }
+    }
+    $('input[name="isAdmin"]').on('change', function () {
+        if ($(this).val() === '1') {
+            $('.admin-roles').removeClass('hidden');
+            $('input[name="roles[]"]').prop('disabled', false)
+        } else {
+            $('.admin-roles').addClass('hidden');
+            $('input[name="roles[]"]').prop('disabled', true)
+        }
+    });
+};
+
 $(document).ready(function () {
     resizeIFrame();
     showDropDownMenus();
@@ -391,4 +423,5 @@ $(document).ready(function () {
     deleteDepartment();
     selectPositions();
     deletePosition();
+    isAdminChange();
 });

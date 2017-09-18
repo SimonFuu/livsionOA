@@ -39,9 +39,10 @@
                     <div class="form-group {{ $errors -> has('icon') ? 'has-error' : '' }}">
                         {!! Form::label('menuUrl', '菜单图标:', ['class' => 'col-sm-2 control-label']) !!}
                         <div class="col-sm-10">
-                            <button class="btn btn-{{ $errors -> has('icon') ? 'danger' : 'default' }} set-action-icon" type="button" data-toggle="modal" data-target="#setActionIconModal"><i class="fa fa-circle-o" aria-hidden="true"></i></button>
+                            <button class="btn btn-{{ $errors -> has('icon') ? 'danger' : 'default' }} set-action-icon" type="button" data-toggle="modal" data-target="#setActionIconModal">
+                                <i class="fa {{is_null($action) ? 'fa-circle-o' : $action -> icon}}" aria-hidden="true"></i></button>
                             &nbsp;&nbsp;&nbsp;<i class="fa fa-hand-o-left" aria-hidden="true"></i> 请点击选择图标
-                            <input class="set-action-icon-value" type="hidden" name="icon" value="fa-circle-o">
+                            <input class="set-action-icon-value" type="hidden" name="icon" value="{{is_null($action) ? 'fa-circle-o' : $action -> icon}}">
                             @if($errors -> has('icon'))
                                 <span class="help-block form-help-block">
                                     <strong>{{ $errors -> first('icon') }}</strong>
@@ -91,6 +92,25 @@
                             @endif
                         </div>
                     </div>
+
+                    <!--- adminOnly Field --->
+                    <div class="form-group {{ $errors -> has('adminOnly') ? 'has-error' : '' }}">
+                        {!! Form::label('adminOnly', '管理员菜单:', ['class' => 'col-sm-2 control-label']) !!}
+                        <div class="col-sm-10">
+                            <label class="radio-inline">
+                                {!! Form::radio('adminOnly', 0, is_null($action) ? 'checked' : ($action -> adminOnly == 0 ? 'checked' : '')) !!}否
+                            </label>
+                            <label class="radio-inline">
+                                {!! Form::radio('adminOnly', 1, (!is_null($action) && $action -> adminOnly == 1) ? 'checked' : '') !!}是
+                            </label>
+                            @if($errors -> has('adminOnly'))
+                                <span class="help-block form-help-block">
+                                    <strong>{{ $errors -> first('adminOnly') }}</strong>
+                                </span>
+                            @endif
+                        </div>
+                    </div>
+
                     <!--- ParentId Field --->
                     <div class="form-group {{ $errors -> has('parentId') ? 'has-error' : '' }}">
                         {!! Form::label('parentId', '父级菜单:', ['class' => 'col-sm-2 control-label']) !!}

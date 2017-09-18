@@ -165,9 +165,9 @@
                             <li class="user-header">
                                 <img src="{{ env('APP_FILE_SERVER_URL') . Auth() -> user() -> avatar }}" class="img-circle" alt="User Image">
                                 <p>
-                                    {{ Auth() -> user() -> name }}
-                                    <small>加入时间 {{ date("D, d M Y", strtotime(Auth() -> user() -> addTime)) }}</small>
-                                    <small>上次登录IP: <strong>{{ Auth() -> user() -> lastLoginIp }}</strong>. 登录次数: <strong>{{ Auth() -> user() -> loginTimes }}</strong></small>
+                                    <strong>{{ Auth() -> user() -> name }}</strong>
+                                    <small>加入时间 {{ date("Y年m月d日", strtotime(Auth() -> user() -> addTime)) }}</small>
+                                    <small>上次登录IP：<strong>{{ Auth() -> user() -> lastLoginIp }}</strong>。 累计登录：<strong>{{ Auth() -> user() -> loginTimes }}</strong>次</small>
                                 </p>
                             </li>
                             <!-- Menu Footer-->

@@ -56,7 +56,7 @@
                 @endif
                 <!--- Username Field --->
                 <div class="form-group {{ $errors -> has('username') ? 'has-error' : '' }}">
-                    {!! Form::label('username', '用户名:', ['class' => 'control-label']) !!}
+                    {!! Form::label('username', '工号:', ['class' => 'control-label']) !!}
                     {!! Form::text('username', null, ['class' => 'form-control']) !!}
                 </div>
                 <!--- Password Field --->

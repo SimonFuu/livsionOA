@@ -14,7 +14,7 @@
                 <table class="table table-hover actions-list">
                     <thead>
                         <tr>
-                            <th width="50">ID</th>
+                            <th width="50">#</th>
                             <th width="100">权限</th>
                             <th width="200">URLs</th>
                             <th width="100">权重</th>

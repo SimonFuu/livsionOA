@@ -18,9 +18,9 @@
                                 <table class="table table-bordered table-condensed table-hover text-center positions-list">
                                     <thead>
                                         <tr>
-                                            <th width="20">ID</th>
-                                            <th width="50">职位</th>
-                                            <th width="50">状态</th>
+                                            <th width="50">#</th>
+                                            <th width="100">职位</th>
+                                            <th width="100">状态</th>
                                         </tr>
                                     </thead>
                                     <tbody class="positions-list-body">

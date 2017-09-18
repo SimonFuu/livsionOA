@@ -14,7 +14,7 @@
                 <table class="table table-hover actions-list">
                     <thead>
                         <tr>
-                            <th width="50">ID</th>
+                            <th width="50">#</th>
                             <th width="100">角色</th>
                             <th width="200">描述</th>
                             <th width="50">操作</th>

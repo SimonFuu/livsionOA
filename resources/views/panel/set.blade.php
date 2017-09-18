@@ -22,9 +22,9 @@
                     <div class="col-sm-8">
                         <!--- Username Field --->
                         <div class="form-group {{ $errors -> has('username') ? 'has-error' : '' }}">
-                            {!! Form::label('username', '用户名:', ['class' => 'col-sm-2 control-label']) !!}
+                            {!! Form::label('username', '工号:', ['class' => 'col-sm-2 control-label']) !!}
                             <div class="col-sm-10">
-                                {!! Form::text('username', is_null($userProfile) ? null : $userProfile -> username, ['class' => 'form-control', 'placeholder' => '请输入用户名！', is_null($userProfile) ? '' : 'readonly']) !!}
+                                {!! Form::text('username', is_null($userProfile) ? null : $userProfile -> username, ['class' => 'form-control', 'placeholder' => '请输入工号！', is_null($userProfile) ? '' : 'readonly']) !!}
                                 @if($errors -> has('username'))
                                     <span class="help-block form-help-block">
                                     <strong>{{ $errors -> first('username') }}</strong>

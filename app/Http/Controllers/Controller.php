@@ -54,7 +54,7 @@ class Controller extends BaseController
         return $ids;
     }
 
-    public function getRoleActionsInfo($roleId = 0)
+    public function getRoleActionsInfo($roleId = 0, $isAdmin = 1)
     {
         $basePermissions = [
             'index',
@@ -73,6 +73,7 @@ class Controller extends BaseController
                 -> select('id', 'actionName', 'description', 'menuUrl', 'icon', 'urls', 'parentId')
                 -> orderBy('weight', 'ASC')
                 -> where('isDelete', 0)
+                -> where('adminOnly', '<=', $isAdmin)
                 -> get();
         } else {
             if (is_array($roleId)) {
@@ -83,6 +84,7 @@ class Controller extends BaseController
                     -> orderBy('system_actions.weight', 'ASC')
                     -> where('system_actions.isDelete', 0)
                     -> where('system_roles_actions.isDelete', 0)
+                    -> where('system_actions.adminOnly', '<=', $isAdmin)
                     -> whereIn('system_roles_actions.rid', $roleId)
                     -> get();
             } else {
@@ -94,6 +96,7 @@ class Controller extends BaseController
                     -> where('system_actions.isDelete', 0)
                     -> where('system_roles_actions.isDelete', 0)
                     -> where('system_roles_actions.rid', $roleId)
+                    -> where('system_actions.adminOnly', '<=', $isAdmin)
                     -> get();
             }
         }
