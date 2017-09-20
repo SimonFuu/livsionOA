@@ -356,3 +356,20 @@ td > label {
      border-color: #dd4b39;
      box-shadow: none;
  }
+
+/**
+    contacts
+ */
+.contacts-departments {
+    margin-top: 20px;
+    margin-bottom: 30px;
+    padding: 10px;
+    border-radius: 5px;
+    background: rgb(242, 242, 242);
+    border: 2px solid rgb(220, 220, 220);
+}
+
+.contacts-list {
+    margin-top: 20px;
+    margin-bottom: 30px;
+}

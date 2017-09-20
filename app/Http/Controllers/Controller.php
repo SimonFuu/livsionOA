@@ -37,6 +37,26 @@ class Controller extends BaseController
         return $tree;
     }
 
+    /**
+     * 生成部门Tree 的Html
+     * @param array $data
+     * @param int $level
+     * @return string
+     */
+    protected function treeViewDepartmentsHtml($data = array(), $level = 0)
+    {
+        $html = '<ul class="tree-menu">';
+        foreach ($data as $value) {
+            $html .= '<li><a href="javascript:;" data-d-id="' . $value -> id . '">';
+            $html .= '<i class="fa fa-angle-right level' . $level . '"></i>';
+            $html .= '<span class="department-name">' . $value -> departmentName . '</span></a></li>';
+            if ($value -> children) {
+                $html .= '<li>' . $this -> treeViewDepartmentsHtml($value -> children, $level+1) . '</li>';
+            }
+        }
+        $html .= '</ul>';
+        return $html;
+    }
 
     protected function treeViewSearch($data = [], $id = 0)
     {
@@ -52,6 +72,36 @@ class Controller extends BaseController
             }
         }
         return $ids;
+    }
+
+    /**
+     * 获取所有下级部门及本身
+     * @param int $id
+     * @return array
+     */
+    protected function getChildrenDepartmentsAndSelf($id = 0)
+    {
+        $dbDepartments = DB::table('system_departments')
+            -> select('*')
+            -> where('isDelete', 0)
+            -> orderBy('weight', 'ASC')
+            -> get();
+        $dps = [];
+        foreach ($dbDepartments as $key => $value) {
+            $dps[] = [
+                'id' => $value -> id,
+                'parent' => $value -> parentDepartment,
+            ];
+        }
+        $departments[] = [
+            'id' => '0',
+            'parent' => '0',
+            'level' => 0,
+            'children' => $this -> treeView($dps, 'parent', 0, 1)
+        ];
+        $childrenIds = $this -> treeViewSearch($departments, $id);
+        $childrenIds[] = $id;
+        return $childrenIds;
     }
 
     public function getRoleActionsInfo($roleId = 0, $isAdmin = 1)
@@ -81,22 +131,28 @@ class Controller extends BaseController
                     -> select('system_actions.id', 'system_actions.actionName', 'system_actions.description',
                         'system_actions.menuUrl', 'system_actions.icon', 'system_actions.urls', 'system_actions.parentId')
                     -> leftJoin('system_roles_actions', 'system_roles_actions.aid', '=', 'system_actions.id')
+                    -> groupBy('system_actions.id')
                     -> orderBy('system_actions.weight', 'ASC')
                     -> where('system_actions.isDelete', 0)
-                    -> where('system_roles_actions.isDelete', 0)
                     -> where('system_actions.adminOnly', '<=', $isAdmin)
-                    -> whereIn('system_roles_actions.rid', $roleId)
+                    -> orWhere(function ($query) use ($roleId) {
+                        $query -> where('system_roles_actions.isDelete', 0);
+                        $query -> whereIn('system_roles_actions.rid', $roleId);
+                    })
                     -> get();
             } else {
                 $rawActions = DB::table('system_actions')
                     -> select('system_actions.id', 'system_actions.actionName', 'system_actions.description',
                         'system_actions.menuUrl', 'system_actions.icon', 'system_actions.urls', 'system_actions.parentId')
                     -> leftJoin('system_roles_actions', 'system_roles_actions.aid', '=', 'system_actions.id')
+                    -> groupBy('system_actions.id')
                     -> orderBy('system_actions.weight', 'ASC')
                     -> where('system_actions.isDelete', 0)
-                    -> where('system_roles_actions.isDelete', 0)
-                    -> where('system_roles_actions.rid', $roleId)
                     -> where('system_actions.adminOnly', '<=', $isAdmin)
+                    -> orWhere(function ($query) use ($roleId) {
+                        $query -> where('system_roles_actions.isDelete', 0);
+                        $query -> where('system_roles_actions.rid', $roleId);
+                    })
                     -> get();
             }
         }

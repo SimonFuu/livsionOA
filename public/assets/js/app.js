@@ -245,45 +245,22 @@ var uploadFiles = function () {
 };
 
 var departmentsListSelect = function () {
-    $('.tree-menu > li > a').on('click', function () {
+    var treeA = $('.tree-menu > li > a');
+    if (typeof (currentDID) !== 'undefined') {
+        treeA.each(function (index, element) {
+            console.log($(element).data('d-id'), parseInt(currentDID));
+            if ($(element).data('d-id') === parseInt(currentDID)) {
+                $(element).parent('li').addClass('active');
+            }
+        })
+    }
+    treeA.on('click', function () {
         $('.tree-menu > li').removeClass('active');
         $(this).parent('li').addClass('active');
         if ($(this).parents('.departments-tree-menu').length > 0) {
-            $.ajax({
-                cache: false,
-                type: 'GET',
-                url: '/system/departments/get',
-                async: false,
-                data: {'id': $(this).data('d-id')},
-                success: function (data) {
-                    if (data.status) {
-                        $('#departmentName').val(data.data.departmentName);
-                        $('#parentDepartmentName').val(data.data.parentName);
-                        $('input[name="parentDepartment"]').val(data.data.parentDepartment);
-                        $('#weight').val(data.data.weight);
-                        $('#description').val(data.data.description);
-                        $('input[name="id"]').val(data.data.id);
-                        $('.selectParentDepartmentButton').prop('disabled', false)
-                    } else {
-                        var html = '<div class="alert alert-danger alert-dismissable">';
-                        html += '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
-                        html += data.message + '</div>';
-                        $('.alert-area').html(html)
-                    }
-                },
-                error: function (request) {
-                    var message = '请稍后再试！';
-                    if (request.status === 404) {
-                        message = '请求地址不存在，请联系管理员确认！'
-                    } else if(request.status >= 500) {
-                        message = '请求异常，请稍后再试！'
-                    }
-                    var html = '<div class="alert alert-danger alert-dismissable">';
-                    html += '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
-                    html += message + '</div>';
-                    $('.alert-area').html(html);
-                }
-            });
+            getDepartmentInfo($(this));
+        } else if($(this).parents('.contacts-departments').length > 0) {
+            getDepartmentUsers($(this));
         } else {
             var selectParentDepartmentModal = $('#selectParentDepartmentModal');
             if(selectParentDepartmentModal.length > 0) {
@@ -297,7 +274,98 @@ var departmentsListSelect = function () {
                 selectUserDepartmentModal.modal('hide');
                 $('input[name="departmentId"]').val($(this).data('d-id'));
                 $('#departmentName').val($(this).children('.department-name').html());
+                return true;
             }
+        }
+    });
+};
+
+var getDepartmentInfo = function (element) {
+    $.ajax({
+        cache: false,
+        type: 'GET',
+        url: '/system/departments/get',
+        async: false,
+        data: {'id': element.data('d-id')},
+        success: function (data) {
+            if (data.status) {
+                $('#departmentName').val(data.data.departmentName);
+                $('#parentDepartmentName').val(data.data.parentName);
+                $('input[name="parentDepartment"]').val(data.data.parentDepartment);
+                $('#weight').val(data.data.weight);
+                $('#description').val(data.data.description);
+                $('input[name="id"]').val(data.data.id);
+                $('.selectParentDepartmentButton').prop('disabled', false)
+            } else {
+                var html = '<div class="alert alert-danger alert-dismissable">';
+                html += '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
+                html += data.message + '</div>';
+                $('.alert-area').html(html)
+            }
+        },
+        error: function (request) {
+            var message = '请稍后再试！';
+            if (request.status === 404) {
+                message = '请求地址不存在，请联系管理员确认！'
+            } else if(request.status >= 500) {
+                message = '请求异常，请稍后再试！'
+            }
+            var html = '<div class="alert alert-danger alert-dismissable">';
+            html += '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
+            html += message + '</div>';
+            $('.alert-area').html(html);
+        }
+    });
+};
+
+var getDepartmentUsers = function (element) {
+    $('input[name="name"]').val('');
+    $.ajax({
+        cache: false,
+        type: 'GET',
+        url: '/contacts/index',
+        async: false,
+        data: {'did': element.data('d-id')},
+        success: function (data) {
+            if (data.status) {
+                var contactsListBody = $('.contacts-list-body');
+                var contactsPagination= $('.contacts-list-pagination');
+                contactsListBody.html('');
+                contactsPagination.html('');
+                var usersItem = data.data.users.data;
+                var usersItemCount = usersItem.length;
+                if (usersItemCount > 0) {
+                    var usersItemHtml = '<tr>';
+                    for(var i = 0; i < usersItemCount; i++) {
+                        usersItemHtml += '<td>' + usersItem[i].username + '</td>';
+                        usersItemHtml += '<td>' + usersItem[i]['name'] + '</td>';
+                        usersItemHtml += '<td>' + usersItem[i]['departmentName'] + '</td>';
+                        usersItemHtml += '<td>' + usersItem[i]['positionName'] + '</td>';
+                        usersItemHtml += '<td>' + usersItem[i]['telephone'] + '</td>';
+                        usersItemHtml += '<td>' + (usersItem[i]['officeTel'] ? usersItem[i]['officeTel'] : '空') + '</td>';
+                        usersItemHtml += '<td>' + (usersItem[i]['email'] ? usersItem[i]['email'] : '空') + '</td></tr>';
+                    }
+                    contactsListBody.html(usersItemHtml);
+                }
+                contactsPagination.html(data.data.pagination);
+            } else {
+                var html = '<div class="alert alert-danger alert-dismissable">';
+                html += '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
+                html += data.message + '</div>';
+                $('.alert-area').html(html)
+            }
+        },
+        error: function (request) {
+            var message = '请稍后再试！';
+            if (request.status === 404) {
+                message = '请求地址不存在，请联系管理员确认！'
+            } else if(request.status >= 500) {
+                message = '请求异常，请稍后再试！'
+            }
+            var html = '<div class="alert alert-danger alert-dismissable">';
+            html += '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
+            html += message + '</div>';
+            $('.alert-area').html(html);
         }
     });
 };

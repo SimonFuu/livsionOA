@@ -32,12 +32,12 @@
                         <!--- Gender Field --->
                         <div class="form-group form-group-sm">
                             {!! Form::label('gender', '性别:', ['class' => 'control-label']) !!}
-                            {!! Form::select('gender', ['男', '女'], isset($sCondition['gender']) ? $sCondition['gender'] : null, ['class' => 'form-control', 'placeholder' => '请选择']) !!}
+                            {!! Form::select('gender', [-1 => '请选择', '男', '女'], isset($sCondition['gender']) ? $sCondition['gender'] : null, ['class' => 'form-control', 'placeholder' => '请选择']) !!}
                         </div>
                         <!--- Gender Field --->
                         <div class="form-group form-group-sm">
                             {!! Form::label('isAdmin', '是否管理员:', ['class' => 'control-label']) !!}
-                            {!! Form::select('isAdmin', ['否', '是'], isset($sCondition['isAdmin']) ? $sCondition['isAdmin'] : null, ['class' => 'form-control', 'placeholder' => '请选择']) !!}
+                            {!! Form::select('isAdmin', [-1 => '请选择', '否', '是'], isset($sCondition['isAdmin']) ? $sCondition['isAdmin'] : null, ['class' => 'form-control', 'placeholder' => '请选择']) !!}
                         </div>
                         <input type="submit" class="btn btn-info btn-sm" value="查询">
                     {!! Form::close() !!}

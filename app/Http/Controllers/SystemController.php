@@ -427,6 +427,9 @@ class SystemController extends Controller
                 -> where('system_users.isDelete', 0)
                 -> where('system_users_roles.isDelete', 0)
                 -> get();
+            if (count($userItem) == 0) {
+                return redirect('/system/users/list') -> with('error', '用户状态异常，请联系管理员！');
+            }
             $user = (object) $user;
             foreach ($userItem as $key => $item) {
                 if ($key == 0) {
@@ -496,6 +499,7 @@ class SystemController extends Controller
             'email' => 'nullable|email|max:64|unique:system_users,email,'
                 . ($request -> has('id') ? $request -> id : 'NULL') . ',id,isDelete,0',
             'gender' => 'required|boolean',
+            'status' => 'required|boolean',
             'isAdmin' => 'required|boolean',
             'roles' => 'required_if:isAdmin,1|array'
         ];
@@ -523,6 +527,8 @@ class SystemController extends Controller
             'email.max' => '电子邮箱长度，最长为64位！',
             'gender.required' => '请选择用户性别！',
             'gender.boolean' => '性别格式不正确！',
+            'status.required' => '请选择用户状态！',
+            'status.boolean' => '用户状态格式不正确！',
             'isAdmin.required' => '请选择是否是管理员！',
             'isAdmin.boolean' => '管理员标识格式不正确！',
             'roles.required_if' => '请选择用户角色！',
@@ -550,13 +556,16 @@ class SystemController extends Controller
             unset($req['password']);
         }
         $userRoles = [];
+        if ($request -> id == 1 && $request -> status == 0) {
+            return redirect() -> back() -> with('error', '无法禁用系统超级管理员，请重试！');
+        }
         DB::beginTransaction();
         try {
             DB::table('system_users')
                 -> where('id', $request -> id)
                 -> update($req);
             DB::table('system_users_roles')
-                -> where('id', $request -> id)
+                -> where('uid', $request -> id)
                 -> update(['isDelete' => 1]);
             if ($request -> isAdmin == 0) {
                 $userRoles[] = [
@@ -574,10 +583,10 @@ class SystemController extends Controller
             DB::table('system_users_roles')
                 -> insert($userRoles);
             DB::commit();
-            return redirect('/system/users/list') -> with('success', '添加后台用户成功');
+            return redirect('/system/users/list') -> with('success', '员工信息修改成功！');
         } catch (\Exception $e) {
             DB::rollback();
-            return redirect('/system/users/list') -> with('error', '添加后台用户失败：' . $e -> getMessage());
+            return redirect('/system/users/list') -> with('error', '员工信息修改失败：' . $e -> getMessage());
         }
     }
 
@@ -611,13 +620,28 @@ class SystemController extends Controller
             DB::table('system_users_roles')
                 -> insert($userRoles);
             DB::commit();
-            return redirect('/system/users/list') -> with('success', '添加后台用户成功');
+            return redirect('/system/users/list') -> with('success', '添加员工成功！');
         } catch (\Exception $e) {
             DB::rollback();
-            return redirect('/system/users/list') -> with('error', '添加后台用户失败：' . $e -> getMessage());
+            return redirect('/system/users/list') -> with('error', '添加员工失败：' . $e -> getMessage());
         }
     }
 
+    public function deleteUsers(Request $request)
+    {
+        if ($request -> has('id')) {
+            if ($request -> id == 1) {
+                return redirect('/system/users/list') -> with('error', '无法删除系统超级管理员！');
+            } else {
+                DB::table('system_users')
+                    -> where('id', $request -> id)
+                    -> update(['status' => 0, 'isDelete' => 1]);
+                return redirect('/system/users/list') -> with('success', '用户删除成功！');
+            }
+        } else {
+            return redirect('/system/users/list') -> with('error', '请提供必要参数！');
+        }
+    }
     /**
      * 部门列表
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
@@ -798,57 +822,6 @@ class SystemController extends Controller
         }
     }
 
-    /**
-     * 获取所有下级部门及本身
-     * @param int $id
-     * @return array
-     */
-    private function getChildrenDepartmentsAndSelf($id = 0)
-    {
-        $dbDepartments = DB::table('system_departments')
-            -> select('*')
-            -> where('isDelete', 0)
-            -> orderBy('weight', 'ASC')
-            -> get();
-        $dps = [];
-        foreach ($dbDepartments as $key => $value) {
-            $dps[] = [
-                'id' => $value -> id,
-                'parent' => $value -> parentDepartment,
-            ];
-        }
-        $departments[] = [
-            'id' => '0',
-            'parent' => '0',
-            'level' => 0,
-            'children' => $this -> treeView($dps, 'parent', 0, 1)
-        ];
-        $childrenIds = $this -> treeViewSearch($departments, $id);
-        $childrenIds[] = $id;
-        return $childrenIds;
-    }
-
-    /**
-     * 生成部门Tree 的Html
-     * @param array $data
-     * @param int $level
-     * @return string
-     */
-    private function treeViewDepartmentsHtml($data = array(), $level = 0)
-    {
-        $html = '<ul class="tree-menu">';
-        foreach ($data as $value) {
-            $html .= '<li><a href="javascript:;" data-d-id="' . $value -> id . '">';
-            $html .= '<i class="fa fa-angle-right level' . $level . '"></i>';
-            $html .= '<span class="department-name">' . $value -> departmentName . '</span></a></li>';
-            if ($value -> children) {
-                $html .= '<li>' . $this -> treeViewDepartmentsHtml($value -> children, $level+1) . '</li>';
-            }
-        }
-        $html .= '</ul>';
-        return $html;
-    }
-
     public function positionsList()
     {
         $dbPositions = DB::table('system_positions')
@@ -916,7 +889,6 @@ class SystemController extends Controller
             return $this -> storeNewPosition($request);
         }
     }
-
 
     public function deletePosition(Request $request)
     {
