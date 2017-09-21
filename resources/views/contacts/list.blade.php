@@ -29,7 +29,7 @@
                         </div>
                         <div class="col-sm-9">
                             <div class="contacts-list">
-                                <table class="table table-hover text-center">
+                                <table class="table table-hover text-center table-striped table-condensed">
                                     <thead>
                                     <tr>
                                         <th width="50">工号</th>

@@ -19,11 +19,12 @@
         <link rel="stylesheet" href="/assets/plugins/AdminLte/css/AdminLTE.min.css">
         <link rel="stylesheet" href="/assets/plugins/AdminLte/css/skin-blue.min.css">
         <link rel="stylesheet" href="/assets/plugins/bootstrap-fileinput-4.4.2/css/fileinput.css" media="all">
-        <link rel="stylesheet" href="/assets/css/layouts.css?v={{ date('YmdHi') }}">
+        <link rel="stylesheet" href="/assets/css/layouts.css?v={{ date('YmdHis') }}">
         <script src="/assets/plugins/jquery-3.2.1/jquery-3.2.1.min.js"></script>
         <script src="/assets/plugins/bootstrap-3.3.7/js/bootstrap.min.js"></script>
         <script src="/assets/plugins/bootstrap-fileinput-4.4.2/js/fileinput.js"></script>
         <script src="/assets/plugins/bootstrap-fileinput-4.4.2/js/plugins/sortable.js"></script>
+        <script src="/assets/plugins/masonry-4.2.0/masonry.pkgd.min.js"></script>
     @else
         <link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
         <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -36,6 +37,7 @@
         <script src="//cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
         <script src="//cdn.bootcss.com/bootstrap-fileinput/4.4.2/js/fileinput.min.js"></script>
         <script src="//cdn.bootcss.com/bootstrap-fileinput/4.4.2/js/plugins/sortable.min.js"></script>
+        <script src="https://cdn.bootcss.com/masonry/4.2.0/masonry.pkgd.min.js"></script>
     @endif
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
