@@ -20,11 +20,15 @@
         <link rel="stylesheet" href="/assets/plugins/AdminLte/css/skin-blue.min.css">
         <link rel="stylesheet" href="/assets/plugins/bootstrap-fileinput-4.4.2/css/fileinput.css" media="all">
         <link rel="stylesheet" href="/assets/css/layouts.css?v={{ date('YmdHis') }}">
+        <link rel="stylesheet" href="/assets/plugins/fullcalendar-3.5.0/fullcalendar.css">
+        <link rel="stylesheet" href="/assets/plugins/fullcalendar-3.5.0/fullcalendar.print.css" media="print">
         <script src="/assets/plugins/jquery-3.2.1/jquery-3.2.1.min.js"></script>
         <script src="/assets/plugins/bootstrap-3.3.7/js/bootstrap.min.js"></script>
         <script src="/assets/plugins/bootstrap-fileinput-4.4.2/js/fileinput.js"></script>
         <script src="/assets/plugins/bootstrap-fileinput-4.4.2/js/plugins/sortable.js"></script>
-        <script src="/assets/plugins/masonry-4.2.0/masonry.pkgd.min.js"></script>
+        <script src="/assets/plugins/fullcalendar-3.5.0/lib/moment.min.js"></script>
+        <script src="/assets/plugins/fullcalendar-3.5.0/fullcalendar.js"></script>
+        <script src="/assets/plugins/fullcalendar-3.5.0/locale/zh-cn.js"></script>
     @else
         <link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
         <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -33,11 +37,15 @@
         <link href="//cdn.bootcss.com/admin-lte/2.3.11/css/skins/skin-blue.css" rel="stylesheet">
         <link rel="stylesheet" href="/assets/css/layouts.css?v={{ env('APP_ASSETS_VERSION') }}">
         <link href="//cdn.bootcss.com/bootstrap-fileinput/4.4.2/css/fileinput.min.css" rel="stylesheet">
+        <link href="https://cdn.bootcss.com/fullcalendar/3.5.0/fullcalendar.min.css" rel="stylesheet">
+        <link href="https://cdn.bootcss.com/fullcalendar/3.5.0/fullcalendar.print.css" rel="stylesheet" media="print">
         <script src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
         <script src="//cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
         <script src="//cdn.bootcss.com/bootstrap-fileinput/4.4.2/js/fileinput.min.js"></script>
         <script src="//cdn.bootcss.com/bootstrap-fileinput/4.4.2/js/plugins/sortable.min.js"></script>
-        <script src="https://cdn.bootcss.com/masonry/4.2.0/masonry.pkgd.min.js"></script>
+        <script src="https://cdn.bootcss.com/moment.js/2.18.1/moment.min.js"></script>
+        <script src="https://cdn.bootcss.com/fullcalendar/3.5.0/fullcalendar.min.js"></script>
+        <script src="https://cdn.bootcss.com/fullcalendar/3.5.0/locale/zh-cn.js"></script>
     @endif
 </head>
 <body class="hold-transition skin-blue sidebar-mini">

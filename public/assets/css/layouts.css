@@ -226,7 +226,7 @@ td > label {
     Index Page
  */
 .index-container {
-    margin: 10px 20px;
+    margin: 10px 15px;
 }
 
 .index-carousel-points {
@@ -234,9 +234,9 @@ td > label {
 }
 
 .index-page-display-part {
-    margin: 20px 0;
-    /*height: 200px;*/
+    margin: 15px 0;
 }
+
 .read-status {
     color: #dd4b39;
     font-size: smaller;
@@ -254,6 +254,20 @@ td > label {
     padding: 2px 3px;
     line-height: .9;
 }
+
+#index-calender > .fc-header-toolbar > .fc-center > h2 {
+    line-height: 30px;
+    font-size: 1.35em !important;
+}
+
+.fc-sun, .fc-sat {
+    color: #dd4b39;
+}
+
+.fc-widget-header {
+    background-color: #ffffff;
+}
+
 
 /**
     departments list
