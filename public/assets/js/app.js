@@ -47,6 +47,12 @@ var sidebarClick = function () {
     });
 };
 
+var indexPageReadMore = function () {
+    $('.tabs-button').on('click', function () {
+        $(this).parents('.box').find('.read-more > a').attr('href', $(this).data('read-more'));
+    });
+};
+
 var roleActionsCheckboxRelate = function () {
     $('.parentRoleAction').on('click', function () {
         if ($(this).is(':checked')) {
@@ -248,7 +254,6 @@ var departmentsListSelect = function () {
     var treeA = $('.tree-menu > li > a');
     if (typeof (currentDID) !== 'undefined') {
         treeA.each(function (index, element) {
-            console.log($(element).data('d-id'), parseInt(currentDID));
             if ($(element).data('d-id') === parseInt(currentDID)) {
                 $(element).parent('li').addClass('active');
             }
@@ -492,4 +497,5 @@ $(document).ready(function () {
     selectPositions();
     deletePosition();
     isAdminChange();
+    indexPageReadMore();
 });

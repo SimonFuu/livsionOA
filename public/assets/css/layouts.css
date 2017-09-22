@@ -222,9 +222,19 @@ td > label {
     max-width: 38px;
 }
 
+.modal-form {
+    padding-right: 15px;
+    padding-left: 15px;
+}
+
 /**
     Index Page
  */
+
+.box-header.nav-tabs-custom {
+    box-shadow: none;
+    margin-bottom: 0;
+}
 .index-container {
     margin: 10px 15px;
 }
@@ -245,6 +255,15 @@ td > label {
 .has-read {
     color: rgb(200,204,210);
 }
+
+.read-more {
+    padding-right: 30px;
+}
+
+.read-more > a {
+    color: rgb(200,204,210) !important;
+}
+
 .tabs-button > .label {
     position: absolute;
     top: 9px;
@@ -258,6 +277,18 @@ td > label {
 #index-calender > .fc-header-toolbar > .fc-center > h2 {
     line-height: 30px;
     font-size: 1.35em !important;
+}
+
+.select-time {
+    cursor: pointer;
+}
+
+.form-group > i {
+    position: absolute;
+    bottom: 40px;
+    right: 15px;
+    top: auto;
+    cursor: pointer;
 }
 
 .fc-sun, .fc-sat {
